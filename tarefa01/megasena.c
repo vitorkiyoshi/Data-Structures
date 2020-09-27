@@ -1,12 +1,12 @@
 #include <stdio.h>
 #define MAX 100
 
-void lerDezenas(int jogos[][6],int participantes){
+void lerDezenas(int jogos[][15],int participantes){
     int jogador,posicao,marcado,numero;
     for(jogador=0;jogador<participantes;jogador++){
         posicao = 0;
         for(numero=1;numero<=60;numero++){
-            int marcado = getchar() == '1';
+            marcado = getchar() == '1';
             if (marcado){
                 jogos[jogador][posicao] = numero;
                 posicao+=1;
@@ -20,7 +20,7 @@ void lerDezenas(int jogos[][6],int participantes){
 }
 void lerSorteado(int sorteado[6]){
     for(int i=0;i<6;i++){
-        scanf("%i",sorteado[i]);
+        scanf("%i",&sorteado[i]);
     }
 }
 void calcularAcertos(int jogos[][15],int sorteado[6],int acertosJogadores[MAX],int jogadores){
@@ -82,7 +82,7 @@ int main(){
     int jogos[MAX][15],jogadores,acertosJogadores[MAX];
     double prize,premio[MAX];
     int sorteado[6];
-    scanf("&d &f", &jogadores, &prize);
+    scanf("&d&lf", &jogadores, &prize);
     lerDezenas(jogos,jogadores);
     lerSorteado(sorteado);
     calcularAcertos(jogos,sorteado,acertosJogadores,jogadores);
@@ -91,7 +91,7 @@ int main(){
     }
     definirPremio(premio,acertosJogadores,jogadores,prize);
     for(int i=0;i<jogadores;i++){
-        printf("%.2f",acertosJogadores[i]);
+        printf("%.2f",premio[i]);
     }
     return 0;
 }
