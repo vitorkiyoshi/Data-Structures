@@ -89,7 +89,7 @@ int main(){
     }
     definirPremio(premio,acertosJogadores,jogadores,prize);
     for(int i=0;i<jogadores;i++){
-        printf("%lf \n",premio[i]);
+        printf("%.2lf \n",premio[i]);
     }
     return 0;
 }
