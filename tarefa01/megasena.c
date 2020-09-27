@@ -14,7 +14,9 @@ void lerDezenas(int jogos[][15],int participantes){
                 }
             }
         }
-        jogos[jogador][posicao+1]=0;
+        if(posicao!=14){
+            jogos[jogador][posicao+1]=0;
+        }
     }
 }
 void lerSorteado(int sorteado[6]){
