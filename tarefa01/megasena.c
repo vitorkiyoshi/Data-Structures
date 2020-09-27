@@ -40,6 +40,44 @@ void calcularAcertos(int jogos[][15],int sorteado[6],int acertosJogadores[MAX],i
         acertos=0;
     }
 }
+void definirPremio(double premio[MAX], int acertosJogadores[MAX], int jogadores, double prize){
+    double primeiro,segundo,quadra,quina,sena;
+    int qtde=0;
+    primeiro=prize*0.62;
+    segundo=prize*0.19;
+    for(int i=4;i<=6;i++){
+        for(int j=0;j<jogadores;j++){
+            if(acertosJogadores[j]==i){ /*definindo valor do premio de acordo com acertos*/
+                qtde+=1;
+            }
+        }
+        if(i==4){
+            quadra=segundo/qtde;
+            for(int j=0;j<jogadores;j++){
+                if(acertosJogadores[j]==4){
+                    premio[j]=quadra;
+                }
+            }
+        }
+        if(i==5){
+            quina=segundo/qtde;
+            for(int j=0;j<jogadores;j++){
+                if(acertosJogadores[j]==5){
+                    premio[j]=quina;
+                }
+            }
+        }
+        if(i==6){
+            sena=primeiro/qtde;
+            for(int j=0;j<jogadores;j++){
+                if(acertosJogadores[j]==6){
+                    premio[j]=sena;
+                }
+            }
+        }
+        qtde=0;
+    }
+}
 int main(){
     int jogos[MAX][15],jogadores,acertosJogadores[MAX];
     double prize,premio[MAX];
