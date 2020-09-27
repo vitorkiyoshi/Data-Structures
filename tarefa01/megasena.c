@@ -1,5 +1,5 @@
 #include <stdio.h>
-#define MAX 100
+#define MAX 1000
 
 void lerDezenas(int jogos[][15],int participantes){
     int jogador,valor,posicao;
