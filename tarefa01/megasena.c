@@ -2,20 +2,19 @@
 #define MAX 100
 
 void lerDezenas(int jogos[][15],int participantes){
-    int jogador,posicao,marcado,numero;
+    int jogador,valor,posicao;
     for(jogador=0;jogador<participantes;jogador++){
-        posicao = 0;
-        for(numero=1;numero<=60;numero++){
-            marcado = getchar() == '1';
-            if (marcado){
-                jogos[jogador][posicao] = numero;
-                posicao+=1;
+        posicao=0;
+        for(int i=0;i<6;i++){
+            for(int j=0;j<10;j++){
+                scanf("%d",&valor);
+                if(valor==1){
+                    jogos[jogador][posicao]=(i*10)+j+1;
+                    posicao+=1;
+                }
             }
-            getchar(); /*Pulando caractere de espaço*/
         }
-        if(posicao != 14) {
-            jogos[jogador][posicao+1] = 0; /*limite de 15 numeros no volante*/
-        }
+        jogos[jogador][posicao+1]=0;
     }
 }
 void lerSorteado(int sorteado[6]){
@@ -90,7 +89,7 @@ int main(){
     }
     definirPremio(premio,acertosJogadores,jogadores,prize);
     for(int i=0;i<jogadores;i++){
-        printf("%.2f",premio[i]);
+        printf("%lf \n",premio[i]);
     }
     return 0;
 }
