@@ -79,10 +79,9 @@ void definirPremio(double premio[MAX], int acertosJogadores[MAX], int jogadores,
     }
 }
 int main(){
-    int jogos[MAX][15],jogadores,acertosJogadores[MAX];
+    int jogadores,jogos[MAX][15],acertosJogadores[MAX],sorteado[6];
     double prize,premio[MAX];
-    int sorteado[6];
-    scanf("&d&lf", &jogadores, &prize);
+    scanf("%d%lf",&jogadores,&prize);
     lerDezenas(jogos,jogadores);
     lerSorteado(sorteado);
     calcularAcertos(jogos,sorteado,acertosJogadores,jogadores);
