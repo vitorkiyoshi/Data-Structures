@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "professor_carlos.h"
 #define MAX 100
-int tamanho_string(char string[]){
+int tamanho_string(char string[]){//tamanho das strings
     for(int i=0;i<MAX;i++){
         if(string[i]=='\00'){
             return i;
@@ -90,7 +90,15 @@ Aluno procura_novo_na_turma(Turma t[], int qtd_turmas, int j){
     return novo;
 }
 Aluno procura_novo_todas_turmas(Turma t[], int qtd_turmas){
-
+    Aluno maisNovo;
+    Turma novos[1];
+    novos[0].qtd=qtd_turmas;
+    int i=0;
+    for(i=0;i<qtd_turmas;i++){
+        novos[0].alunos[i]= procura_novo_na_turma(t,0,i);
+    }
+    maisNovo=procura_novo_na_turma(novos,0,0);
+    return maisNovo;
 }
 Aluno procura_velho_na_turma(Turma t[], int qtd_turmas, int j){
     ordenarTurma(t,t[j].qtd,j);
@@ -107,7 +115,15 @@ Aluno procura_velho_na_turma(Turma t[], int qtd_turmas, int j){
         return velho;
 }
 Aluno procura_velho_todas_turmas(Turma t[], int qtd_turmas){
-    
+    Aluno maisVelho;
+    Turma velhos[1];
+    velhos[0].qtd=qtd_turmas;
+    int i;
+    for(i=0;i<qtd_turmas;i++){
+        velhos[0].alunos[i]= procura_velho_na_turma(t,0,i);
+    }
+    maisVelho=procura_velho_na_turma(velhos,0,0);
+    return maisVelho;
 }
 
 int conta_substrings(Turma t[], int qtd_turmas, char *padrao){
