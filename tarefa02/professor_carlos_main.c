@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include "professor_carlos.h"
 #define MAX 100
-void ler_primeira_entrada(x,y){
-    scanf("%d%d",&x,&y);
-}
 Turma ler_turma(){
     int qtde,i;
     Turma x;
@@ -17,51 +14,49 @@ Turma ler_turma(){
     return x;
 }
 void ler_operacao(Turma t[],int numero_turmas){
-    int operacao;
+    int operacao,idturma;
+    Aluno al;
+    char s[15];
     scanf("%d",&operacao);
     switch(operacao){
         case 1 :
-            int idturma;
             scanf("%d",&idturma);
-            Aluno novo=procura_novo_na_turma(t,numero_turmas,idturma);
-            printf("%s",novo.nome);
+            al=procura_novo_na_turma(t,numero_turmas,idturma);
+            printf("%s\n",al.nome);
         break;
 
         case 2 : 
-            int idturma;
             scanf("%d",&idturma);
-            Aluno velho=procura_velho_na_turma(t,numero_turmas,idturma);
-            printf("%s",velho.sobrenome);
+            al=procura_velho_na_turma(t,numero_turmas,idturma);
+            printf("%s\n",al.sobrenome);
         break;
 
         case 3 :
-            Aluno mVelho=procura_velho_todas_turmas(t,numero_turmas);
-            printf("%s",mVelho.nome);
+            al=procura_velho_todas_turmas(t,numero_turmas);
+            printf("%s\n",al.nome);
         break;
 
         case 4 :
-            Aluno mNovo=procura_novo_todas_turmas(t,numero_turmas);
-            printf("%s",mNovo.sobrenome);
+            al=procura_novo_todas_turmas(t,numero_turmas);
+            printf("%s\n",al.sobrenome);
         break;
 
         case 5 :
-            
+            scanf("%s",s);
+            printf("%d\n",conta_substrings(t,numero_turmas,s));
         break;
 
         case 6 :
-            int idturma;
-            Aluno a;
             scanf("%d",&idturma);
-            scanf("%s",a.nome);
-            scanf("%s",a.sobrenome);
-            scanf("%d%d%d",&a.nascimento.dia,&a.nascimento.mes,&a.nascimento.ano);
-            printf("%d",add_aluno(t,a,idturma));
+            scanf("%s",al.nome);
+            scanf("%s",al.sobrenome);
+            scanf("%d%d%d",&al.nascimento.dia,&al.nascimento.mes,&al.nascimento.ano);
+            printf("%d\n",add_aluno(t,al,idturma));
         break;
         
         case 7 :
-            int idturma;
             scanf("%d",&idturma);
-            printf("%d",remove_aluno(t,idturma));
+            printf("%d\n",remove_aluno(t,idturma));
         break;
     }
 }
@@ -69,7 +64,8 @@ void ler_operacao(Turma t[],int numero_turmas){
 int main(){
     int n_operacoes,n_turmas,i;
     Turma t[MAX];
-    ler_primeira_entrada(n_operacoes,n_turmas);
+    scanf("%d",&n_turmas);
+    scanf("%d",&n_operacoes);
     for(i=0;i<n_turmas;i++){
         t[i]=ler_turma();
     }

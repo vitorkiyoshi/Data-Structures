@@ -2,12 +2,15 @@
 #include "professor_carlos.h"
 #define MAX 100
 int tamanho_string(char string[]){//tamanho das strings
-    for(int i=0;i<MAX;i++){
+    int i;
+    for(i=0;i<MAX;i++){
         if(string[i]=='\00'){
             return i;
         }
     }
+    return 0;
 }
+
 int comparar_strings(char string1[],char string2[]){ 
     /*Compara para ver qual string lexicograficamente é maior, 1 para string1 em primeiro, -1 para string 2 em prim*/
     int x=tamanho_string(string1);
@@ -38,6 +41,7 @@ int comparar_strings(char string1[],char string2[]){
     }
     return 0;
 }
+
 int substring(char string[],char substring[],int tam_substring){
     int x=tamanho_string(string);
     int i,j,igual=1;
@@ -53,6 +57,7 @@ int substring(char string[],char substring[],int tam_substring){
     }
     return 0;
 }
+
 void ordenarTurma(Turma t[],int qtde,int turma){
     int i,j;
     Aluno troca;
@@ -75,6 +80,7 @@ void ordenarTurma(Turma t[],int qtde,int turma){
         }
     }
 }
+
 Aluno procura_novo_na_turma(Turma t[], int qtd_turmas, int j){
     ordenarTurma(t,t[j].qtd,j);
     Aluno novo;
@@ -89,6 +95,7 @@ Aluno procura_novo_na_turma(Turma t[], int qtd_turmas, int j){
     }
     return novo;
 }
+
 Aluno procura_novo_todas_turmas(Turma t[], int qtd_turmas){
     Aluno maisNovo;
     Turma novos[1];
@@ -100,20 +107,23 @@ Aluno procura_novo_todas_turmas(Turma t[], int qtd_turmas){
     maisNovo=procura_novo_na_turma(novos,0,0);
     return maisNovo;
 }
+
 Aluno procura_velho_na_turma(Turma t[], int qtd_turmas, int j){
     ordenarTurma(t,t[j].qtd,j);
-        Aluno velho;
-        Data dataVelho=t[j].alunos[0].nascimento;
-        int i=0;
-        for(i=1;i<t[j].qtd;i++){
-            Data data=t[j].alunos[i].nascimento;
-            if(((data.ano*365)+(data.mes*30)+data.dia)<((dataVelho.ano*365)+(dataVelho.mes*30)+dataVelho.dia)){
-                velho=t[j].alunos[i];
-                dataVelho=t[j].alunos[i].nascimento;
-            }
+    Aluno velho;
+    Data dataVelho=t[j].alunos[0].nascimento;
+    int i=0;
+    for(i=1;i<t[j].qtd;i++){
+        Data data=t[j].alunos[i].nascimento;
+        if(((data.ano*365)+(data.mes*30)+data.dia)<((dataVelho.ano*365)+(dataVelho.mes*30)+dataVelho.dia)){
+            velho=t[j].alunos[i];
+            dataVelho=t[j].alunos[i].nascimento;
         }
-        return velho;
+    }
+    printf(velho.sobrenome);
+    return velho;
 }
+
 Aluno procura_velho_todas_turmas(Turma t[], int qtd_turmas){
     Aluno maisVelho;
     Turma velhos[1];
@@ -141,11 +151,13 @@ int conta_substrings(Turma t[], int qtd_turmas, char *padrao){
     }
     return numero;
 }
+
 int add_aluno(Turma t[], Aluno A, int j){
     t[j].alunos[t[j].qtd]=A;
     t[j].qtd+=1;
     return t[j].qtd;
 }
+
 int remove_aluno(Turma t[], int j){
     t[j].qtd-=1;
     return t[j].qtd;
