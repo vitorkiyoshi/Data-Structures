@@ -18,7 +18,7 @@ Turma ler_turma(){
 void ler_operacao(Turma t[],int numero_turmas){
     Aluno al;
     int operacao,idturma;
-    char s[5];
+    char s[7];
     scanf(" %d",&operacao);
     if(operacao==1){
         scanf(" %d",&idturma);
@@ -35,18 +35,18 @@ void ler_operacao(Turma t[],int numero_turmas){
         printf("%s\n",procura_novo_todas_turmas(t,numero_turmas).sobrenome);
     }
     if(operacao==5){
-            scanf(" %s",s);
-            printf("%d\n",conta_substrings(t,numero_turmas,s));
+        scanf("%s ",s);
+        printf("%d\n",conta_substrings(t,numero_turmas,s));
     }
     if(operacao==6){
-        scanf(" %d",&idturma);
-        scanf(" %s",al.nome);
-        scanf(" %s",al.sobrenome);
+        scanf("%d",&idturma);
+        scanf("%s",al.nome);
+        scanf("%s",al.sobrenome);
         scanf("%d %d %d",&al.nascimento.dia,&al.nascimento.mes,&al.nascimento.ano);
         printf("%d\n",add_aluno(t,al,idturma));
     }
     if(operacao==7){
-        scanf(" %d ",&idturma);
+        scanf("%d",&idturma);
         printf("%d\n",remove_aluno(t,idturma));
     }
 }

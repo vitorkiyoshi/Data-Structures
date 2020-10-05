@@ -4,7 +4,7 @@
 int tamanho_string(char string[]){//tamanho das strings
     int i;
     for(i=0;i<MAX;i++){
-        if(string[i]=='\00'){
+        if(string[i]=='\0'){
             return i;
         }
     }
@@ -119,12 +119,13 @@ Aluno procura_velho_todas_turmas(Turma t[], int qtd_turmas){
     maisVelho=procura_velho_na_turma(velhos,0,0);
     return maisVelho;
 }
-int substring(char string[],char substring[],int tam_substring){
+int substring(char string[],char substring[]){
     int pos_substring=0;
     int pos_string=0;
     int i=tamanho_string(string);
-    for(int j=0;j<i;j++){
-        if(pos_substring==tam_substring){
+    int j=tamanho_string(substring);
+    while(pos_string<i){
+        if(pos_substring==j){
             return 1;
         }
         if(string[pos_string]==substring[pos_substring]){
@@ -135,8 +136,8 @@ int substring(char string[],char substring[],int tam_substring){
         }
         pos_string+=1;
     }
-    if(string[pos_string]==substring[pos_substring]){
-        if(pos_substring==tam_substring){
+    if(string[i-1]==substring[j-1]){
+        if(pos_substring==j){
             return 1;
         }
     }
@@ -146,12 +147,11 @@ int substring(char string[],char substring[],int tam_substring){
 int conta_substrings(Turma t[], int qtd_turmas, char *padrao){
     /*Achando tamanho da substring*/
     int numero=0;
-    int tam_substring=tamanho_string(padrao);
+    int resultado=0;
     for(int i=0;i<qtd_turmas;i++){
         for(int j=0;j<t[i].qtd;j++){
-            if(substring(t[i].alunos[j].nome,padrao,tam_substring)==1){
-                numero+=1;
-            }
+            resultado=substring(t[i].alunos[j].nome,padrao);
+                numero+=resultado;
         }
     }
     return numero;
