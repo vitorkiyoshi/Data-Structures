@@ -61,7 +61,7 @@ int substring(char string[],char substring[],int tam_substring){
 void ordenarTurma(Turma t[],int qtde,int turma){
     int i,j;
     Aluno troca;
-    for(i=qtde;i>0;i--){//para o sobrenome
+    for(i=qtde;i>0;i--){
         for(j=0;j<i;j++){
             if(comparar_strings(t[turma].alunos[j].sobrenome,t[turma].alunos[j+1].sobrenome)<0){
                 troca=t[turma].alunos[j];
@@ -70,7 +70,7 @@ void ordenarTurma(Turma t[],int qtde,int turma){
             }
         }
     }
-    for(i=qtde;i>0;i--){//para o nome
+    for(i=qtde;i>0;i--){
         for(j=0;j<i;j++){
             if(comparar_strings(t[turma].alunos[j].nome,t[turma].alunos[j+1].nome)<0){
                 troca=t[turma].alunos[j];
@@ -83,12 +83,12 @@ void ordenarTurma(Turma t[],int qtde,int turma){
 
 Aluno procura_novo_na_turma(Turma t[], int qtd_turmas, int j){
     ordenarTurma(t,t[j].qtd,j);
-    Aluno novo;
+    Aluno novo=t[j].alunos[0];
     Data dataNovo=t[j].alunos[0].nascimento;
     int i=0;
     for(i=1;i<t[j].qtd;i++){
         Data data=t[j].alunos[i].nascimento;
-        if(((data.ano*365)+(data.mes*30)+data.dia)>((dataNovo.ano*365)+(dataNovo.mes*30)+dataNovo.dia)){
+        if((data.ano>dataNovo.ano)||((data.ano==dataNovo.ano)&&(data.mes>dataNovo.mes))||((data.ano==dataNovo.ano)&&(data.mes==dataNovo.mes)&&(data.dia>dataNovo.dia))){
             novo=t[j].alunos[i];
             dataNovo=t[j].alunos[i].nascimento;
         }
@@ -110,17 +110,16 @@ Aluno procura_novo_todas_turmas(Turma t[], int qtd_turmas){
 
 Aluno procura_velho_na_turma(Turma t[], int qtd_turmas, int j){
     ordenarTurma(t,t[j].qtd,j);
-    Aluno velho;
+    Aluno velho=t[j].alunos[0];
     Data dataVelho=t[j].alunos[0].nascimento;
     int i=0;
     for(i=1;i<t[j].qtd;i++){
         Data data=t[j].alunos[i].nascimento;
-        if(((data.ano*365)+(data.mes*30)+data.dia)<((dataVelho.ano*365)+(dataVelho.mes*30)+dataVelho.dia)){
+         if((data.ano<dataVelho.ano)||((data.ano==dataVelho.ano)&&(data.mes<dataVelho.mes))||((data.ano==dataVelho.ano)&&(data.mes==dataVelho.mes)&&(data.dia<dataVelho.dia))){
             velho=t[j].alunos[i];
             dataVelho=t[j].alunos[i].nascimento;
         }
     }
-    printf(velho.sobrenome);
     return velho;
 }
 
