@@ -20,42 +20,34 @@ void ler_operacao(Turma t[],int numero_turmas){
     int operacao,idturma;
     char s[5];
     scanf(" %d",&operacao);
-    switch(operacao){
-        case 1 :
-            scanf(" %d",&idturma);
-            printf("%s\n",procura_novo_na_turma(t,numero_turmas,idturma).nome);
-        break;
-
-        case 2 : 
-            scanf(" %d",&idturma);
-            printf("%s\n",procura_velho_na_turma(t,numero_turmas,idturma).sobrenome);
-        break;
-
-        case 3 :
-            printf("%s\n",procura_velho_todas_turmas(t,numero_turmas).nome);
-        break;
-
-        case 4 :
-            printf("%s\n",procura_novo_todas_turmas(t,numero_turmas).sobrenome);
-        break;
-
-        case 5 :
+    if(operacao==1){
+        scanf(" %d",&idturma);
+        printf("%s\n",procura_novo_na_turma(t,numero_turmas,idturma).nome);
+    }
+    if(operacao==2){
+        scanf(" %d",&idturma);
+        printf("%s\n",procura_velho_na_turma(t,numero_turmas,idturma).sobrenome);
+    }
+    if(operacao==3){
+        printf("%s\n",procura_velho_todas_turmas(t,numero_turmas).nome);
+    }
+    if(operacao==4){
+        printf("%s\n",procura_novo_todas_turmas(t,numero_turmas).sobrenome);
+    }
+    if(operacao==5){
             scanf(" %s",s);
             printf("%d\n",conta_substrings(t,numero_turmas,s));
-        break;
-
-        case 6 :
-            scanf(" %d",&idturma);
-            scanf(" %s",al.nome);
-            scanf(" %s",al.sobrenome);
-            scanf("%d %d %d",&al.nascimento.dia,&al.nascimento.mes,&al.nascimento.ano);
-            printf("%d\n",add_aluno(t,al,idturma));
-        break;
-        
-        case 7 :
-            scanf(" %d ",&idturma);
-            printf("%d\n",remove_aluno(t,idturma));
-        break;
+    }
+    if(operacao==6){
+        scanf(" %d",&idturma);
+        scanf(" %s",al.nome);
+        scanf(" %s",al.sobrenome);
+        scanf("%d %d %d",&al.nascimento.dia,&al.nascimento.mes,&al.nascimento.ano);
+        printf("%d\n",add_aluno(t,al,idturma));
+    }
+    if(operacao==7){
+        scanf(" %d ",&idturma);
+        printf("%d\n",remove_aluno(t,idturma));
     }
 }
 

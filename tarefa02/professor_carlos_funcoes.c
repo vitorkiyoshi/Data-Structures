@@ -18,64 +18,49 @@ int comparar_strings(char string1[],char string2[]){
     if(x>=y){
         for(int i=0;i<y;i++){
             if(string1[i]<string2[i]){
-                return 1;
+                return -1;
             }
             else if(string1[i]>string2[i]){
-                return -1;
+                return 1;
             }
         }
         if(x!=y){
-            return -1;
+            return 1;
         }
     }
     else{
         for(int i=0;i<x;i++){
             if(string1[i]<string2[i]){
-                return 1;
-            }
-            else if(string1[i]>string2[i]){
                 return -1;
             }
+            else if(string1[i]>string2[i]){
+                return 1;
+            }
         }
-        return 1;
+        return -1;
     }
     return 0;
 }
 
-int substring(char string[],char substring[],int tam_substring){
-    int x=tamanho_string(string);
-    int i,j,igual=1;
-    for(i=0;i<=(x-tam_substring);i++){
-        for(j=0;j<tam_substring;j++){
-            if(string[i+j]!=substring[j]){
-                igual=0;
-            }
-        }
-        if(igual==1){
-            return 1;
-        }
-    }
-    return 0;
-}
 
 void ordenarTurma(Turma t[],int qtde,int turma){
     int i,j;
     Aluno troca;
     for(i=qtde;i>0;i--){
-        for(j=0;j<i;j++){
-            if(comparar_strings(t[turma].alunos[j].sobrenome,t[turma].alunos[j+1].sobrenome)<0){
-                troca=t[turma].alunos[j];
-                t[turma].alunos[j]=t[turma].alunos[j+1];
-                t[turma].alunos[j+1]=troca;
+        for(j=0;j<i-1;j++){
+            if(comparar_strings(t[turma].alunos[j].sobrenome,t[turma].alunos[j+1].sobrenome)>0){
+                troca=t[turma].alunos[j+1];
+                t[turma].alunos[j+1]=t[turma].alunos[j];
+                t[turma].alunos[j]=troca;
             }
         }
     }
     for(i=qtde;i>0;i--){
-        for(j=0;j<i;j++){
-            if(comparar_strings(t[turma].alunos[j].nome,t[turma].alunos[j+1].nome)<0){
-                troca=t[turma].alunos[j];
-                t[turma].alunos[j]=t[turma].alunos[j+1];
-                t[turma].alunos[j+1]=troca;
+        for(j=0;j<i-1;j++){
+            if(comparar_strings(t[turma].alunos[j].nome,t[turma].alunos[j+1].nome)>0){
+                troca=t[turma].alunos[j+1];
+                t[turma].alunos[j+1]=t[turma].alunos[j];
+                t[turma].alunos[j]=troca;
             }
         }
     }
@@ -134,16 +119,37 @@ Aluno procura_velho_todas_turmas(Turma t[], int qtd_turmas){
     maisVelho=procura_velho_na_turma(velhos,0,0);
     return maisVelho;
 }
-
+int substring(char string[],char substring[],int tam_substring){
+    int pos_substring=0;
+    int pos_string=0;
+    int i=tamanho_string(string);
+    for(int j=0;j<i;j++){
+        if(pos_substring==tam_substring){
+            return 1;
+        }
+        if(string[pos_string]==substring[pos_substring]){
+            pos_substring+=1;
+        }
+        else{
+            pos_substring=0;
+        }
+        pos_string+=1;
+    }
+    if(string[pos_string]==substring[pos_substring]){
+        if(pos_substring==tam_substring){
+            return 1;
+        }
+    }
+    return 0;
+    
+}
 int conta_substrings(Turma t[], int qtd_turmas, char *padrao){
     /*Achando tamanho da substring*/
     int numero=0;
     int tam_substring=tamanho_string(padrao);
-    int ver;
     for(int i=0;i<qtd_turmas;i++){
         for(int j=0;j<t[i].qtd;j++){
-            ver=substring(t[i].alunos[j].nome,padrao,tam_substring);
-            if(ver==1){
+            if(substring(t[i].alunos[j].nome,padrao,tam_substring)==1){
                 numero+=1;
             }
         }
