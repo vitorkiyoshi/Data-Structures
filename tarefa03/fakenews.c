@@ -156,5 +156,19 @@ int main(){
             }
         }
     }
+    free(qtde);
+    for(*i=0;*i<*n;(*i)++){
+        free(nomes[*i]);
+        free(atributos[*i]);
+        free(relevancia[*i]);
+    }
+    free(nomes);
+    free(atributos);
+    free(relevancia);
+    free(selecionados);
+    free(n);
+    free(m);
+    free(i);
+    free(j);
     return 0;
 }
