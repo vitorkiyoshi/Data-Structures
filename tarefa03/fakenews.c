@@ -2,61 +2,56 @@
 #include <stdlib.h>
 #include <math.h>
 #define MAX 1000
-double * media(double vetor[], int tamanho_vetor){
+double media(double vetor[], int tamanho_vetor){
     int *i;
-    double *media;
+    double media;
     i=malloc(sizeof(int));
-    media=malloc(sizeof(double));
-    *media=0;
+    media=0;
     *i=0;
     for(*i=0;*i<tamanho_vetor;(*i)++){
-        *media+=vetor[*i];
+        media+=vetor[*i];
     }
-    *media/=tamanho_vetor;
+    media/=tamanho_vetor;
     free(i);
     return media;
-    free(media);
 }
-double * desvioPadrao(double vetor[],double * media,int tamanho_vetor){
-    double *variancia;
+double desvioPadrao(double vetor[],double * media,int tamanho_vetor){
+    double variancia;
     int *i;
     i=malloc(sizeof(int));
-    variancia=malloc(sizeof(double));
-    *variancia=0;
+    variancia=0;
     *i=0;
     for(*i=0;*i<tamanho_vetor;(*i)++){
-        *variancia+=(vetor[*i]-*media)*(vetor[*i]-*media);
+        variancia+=(vetor[*i]-*media)*(vetor[*i]-*media);
     }
-    *variancia/=tamanho_vetor;
-    *variancia=sqrt(*variancia);
+    variancia/=tamanho_vetor;
+    variancia=sqrt(variancia);
     free(i);
     return variancia;
 }
-double * maximo(double vetor[],int tamanho_vetor){
-    double *max;
+double maximo(double vetor[],int tamanho_vetor){
+    double max;
     int *i;
-    max=malloc(sizeof(double));
     i=malloc(sizeof(int));
     *i=0;
-    *max=0;
+    max=0;
     for(*i=0;*i<tamanho_vetor;(*i)++){
-        if(vetor[*i]>*max){
-            *max=vetor[*i];
+        if(vetor[*i]>max){
+            max=vetor[*i];
         }
     }
     free(i);
     return max;
 }
-double * minimo(double vetor[],int tamanho_vetor){
-    double *min;
+double minimo(double vetor[],int tamanho_vetor){
+    double min;
     int *i;
-    min=malloc(sizeof(double));
     i=malloc(sizeof(int));
     *i=0;
-    *min=vetor[0];
+    min=vetor[0];
     for(*i=1;*i<tamanho_vetor;(*i)++){
-        if(vetor[*i]<*min){
-            *min=vetor[*i];
+        if(vetor[*i]<min){
+            min=vetor[*i];
         }
     }
     free(i);
@@ -76,7 +71,7 @@ int main(){
     selecionados=malloc(*n*sizeof(int));
     relevancia=malloc(*n*sizeof(int*));
     nomes=malloc(*n*sizeof(int*));
-    atributos=malloc(*n*sizeof(int*));
+    atributos=malloc(*n*sizeof(double*));
     *i=0;
     *j=0;
     for(*i=0;*i<*n;(*i)++){
@@ -90,10 +85,10 @@ int main(){
         for(*j=0;*j<*m;(*j)++){
             scanf("%lf",&relevancia[*i][*j]);
         }
-        atributos[*i][0]= *maximo(relevancia[*i],*m);
-        atributos[*i][1]= *minimo(relevancia[*i],*m);
-        atributos[*i][2]= *media(relevancia[*i],*m);
-        atributos[*i][3]= *desvioPadrao(relevancia[*i],&atributos[*i][2],*m);
+        atributos[*i][0]= maximo(relevancia[*i],*m);
+        atributos[*i][1]= minimo(relevancia[*i],*m);
+        atributos[*i][2]= media(relevancia[*i],*m);
+        atributos[*i][3]= desvioPadrao(relevancia[*i],&atributos[*i][2],*m);
     }
     //saida
     for(*i=0;*i<*n;(*i)++){
@@ -171,8 +166,8 @@ int main(){
     free(qtde);
     for(*i=0;*i<*n;(*i)++){
         free(nomes[*i]);
-        free(atributos[*i]);
         free(relevancia[*i]);
+        free(atributos[*i]);
     }
     free(nomes);
     free(atributos);
