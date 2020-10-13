@@ -15,6 +15,7 @@ double * media(double vetor[], int tamanho_vetor){
     *media/=tamanho_vetor;
     free(i);
     return media;
+    free(media);
 }
 double * desvioPadrao(double vetor[],double * media,int tamanho_vetor){
     double *variancia;
