@@ -19,6 +19,7 @@ double * desvioPadrao(double vetor[],double * media,int tamanho_vetor){
     int *i;
     i=malloc(sizeof(int));
     variancia=malloc(sizeof(double));
+    *variancia=0;
     for(*i=0;*i<tamanho_vetor;(*i)++){
         *variancia+=(vetor[*i]-*media)*(vetor[*i]-*media);
     }
@@ -62,11 +63,13 @@ int main(){
     qtde=malloc(sizeof(int));
     n=malloc(sizeof(int));
     m=malloc(sizeof(int));
+    scanf("%d %d",n,m);
     selecionados=malloc(*n*sizeof(int));
-    scanf("%d%d",n,m);
     relevancia=malloc(*n*sizeof(int*));
     nomes=malloc(*n*sizeof(int*));
     atributos=malloc(*n*sizeof(int*));
+    *i=0;
+    *j=0;
     for(*i=0;*i<*n;(*i)++){
         //gerando matrizes
         nomes[*i]=malloc(MAX*sizeof(char));
@@ -81,7 +84,7 @@ int main(){
         atributos[*i][0]= *maximo(relevancia[*i],*m);
         atributos[*i][1]= *minimo(relevancia[*i],*m);
         atributos[*i][2]= *media(relevancia[*i],*m);
-        atributos[*i][3]= *desvioPadrao(relevancia[*i],media(relevancia[*i],*m),*m);
+        atributos[*i][3]= *desvioPadrao(relevancia[*i],&atributos[*i][2],*m);
     }
     //saida
     for(*i=0;*i<*n;(*i)++){
