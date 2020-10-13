@@ -8,6 +8,7 @@ double * media(double vetor[], int tamanho_vetor){
     i=malloc(sizeof(int));
     media=malloc(sizeof(double));
     *media=0;
+    *i=0;
     for(*i=0;*i<tamanho_vetor;(*i)++){
         *media+=vetor[*i];
     }
@@ -20,6 +21,7 @@ double * desvioPadrao(double vetor[],double * media,int tamanho_vetor){
     i=malloc(sizeof(int));
     variancia=malloc(sizeof(double));
     *variancia=0;
+    *i=0;
     for(*i=0;*i<tamanho_vetor;(*i)++){
         *variancia+=(vetor[*i]-*media)*(vetor[*i]-*media);
     }
@@ -32,6 +34,7 @@ double * maximo(double vetor[],int tamanho_vetor){
     int *i;
     max=malloc(sizeof(double));
     i=malloc(sizeof(int));
+    *i=0;
     *max=0;
     for(*i=0;*i<tamanho_vetor;(*i)++){
         if(vetor[*i]>*max){
@@ -45,6 +48,7 @@ double * minimo(double vetor[],int tamanho_vetor){
     int *i;
     min=malloc(sizeof(double));
     i=malloc(sizeof(int));
+    *i=0;
     *min=vetor[0];
     for(*i=1;*i<tamanho_vetor;(*i)++){
         if(vetor[*i]<*min){
