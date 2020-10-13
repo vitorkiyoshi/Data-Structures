@@ -13,6 +13,7 @@ double * media(double vetor[], int tamanho_vetor){
         *media+=vetor[*i];
     }
     *media/=tamanho_vetor;
+    free(i);
     return media;
 }
 double * desvioPadrao(double vetor[],double * media,int tamanho_vetor){
@@ -27,6 +28,7 @@ double * desvioPadrao(double vetor[],double * media,int tamanho_vetor){
     }
     *variancia/=tamanho_vetor;
     *variancia=sqrt(*variancia);
+    free(i);
     return variancia;
 }
 double * maximo(double vetor[],int tamanho_vetor){
@@ -41,6 +43,7 @@ double * maximo(double vetor[],int tamanho_vetor){
             *max=vetor[*i];
         }
     }
+    free(i);
     return max;
 }
 double * minimo(double vetor[],int tamanho_vetor){
@@ -55,6 +58,7 @@ double * minimo(double vetor[],int tamanho_vetor){
             *min=vetor[*i];
         }
     }
+    free(i);
     return min;
 }
 int main(){
