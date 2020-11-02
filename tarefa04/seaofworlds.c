@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
+
 #define MAX 21
 
-int conferir(int n, int m, char texto[m][n], int aux[m][n], char palavra[], int posicaoletra, int x, int y){
+int conferir(int n, int m, char** texto, int** aux, char* palavra, int posicaoletra, int x, int y){
     aux[y][x] = 1;
     if(texto[y][x] == palavra[posicaoletra]){
         if (palavra[posicaoletra+1] == '\00'){
@@ -24,13 +26,13 @@ int conferir(int n, int m, char texto[m][n], int aux[m][n], char palavra[], int 
     return 0;
 }
 
-
-int conferir_inicial(int n, int m, char texto[m][n], char palavra[]){
-    int aux[m][n];
+int conferir_inicial(int n, int m, char** texto, char* palavra){
+    int **aux = malloc(sizeof(int*) * m);
     for(int i = 0; i<m; i++){
+        aux[i] = malloc(sizeof(int) * n);
         for(int j = 0; j<n; j++){
             aux[i][j] = 0;
-        }
+        }   
     }
     for(int i = 0; i<m; i++) {
         for (int j = 0; j < n; j++) {
@@ -49,14 +51,16 @@ int main(){
     scanf("%i", &n);
     scanf("%i", &m);
     scanf("%i", &q);
-    char texto[m][n];
-    char palavras[q][MAX];
+    char **texto = malloc(sizeof(char*) * m);
+    char **palavras = malloc(sizeof(char*) * q);
     for(int i = 0; i<m; i++){
         for(int j = 0; j<n; j++){
+            texto[i] = malloc(sizeof(char) * n);
             scanf(" %c", &texto[i][j]);
         }
     }
     for(int i = 0; i<q; i++){
+        palavras[i] = malloc(sizeof(char) * n);
         scanf("%s", palavras[i]);
     }
     for(int i = 0; i<q; i++){
