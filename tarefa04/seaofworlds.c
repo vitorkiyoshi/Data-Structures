@@ -25,6 +25,25 @@ int conferir(int n, int m, char texto[m][n], int aux[m][n], char palavra[], int 
 }
 
 
+int conferir_inicial(int n, int m, char texto[m][n], char palavra[]){
+    int aux[m][n];
+    for(int i = 0; i<m; i++){
+        for(int j = 0; j<n; j++){
+            aux[i][j] = 0;
+        }
+    }
+    for(int i = 0; i<m; i++) {
+        for (int j = 0; j < n; j++) {
+            if(texto[i][j] == palavra[0]) {
+                if (conferir(n, m, texto, aux, palavra, 0, j, i)) {
+                    return 1;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
 int main(){
     int m, n, q;
     scanf("%i", &n);
