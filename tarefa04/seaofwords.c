@@ -25,7 +25,6 @@ int conferir(int n, int m, char** texto, int** aux, char* palavra, int posicaole
     aux[y][x] = 0;
     return 0;
 }
-
 int conferir_inicial(int n, int m, char** texto, char* palavra){
     int **aux = malloc(sizeof(int*) * n);
     for(int i = 0; i<m; i++){
@@ -38,11 +37,19 @@ int conferir_inicial(int n, int m, char** texto, char* palavra){
         for (int j = 0; j < m; j++) {
             if(texto[i][j] == palavra[0]) {
                 if (conferir(n, m, texto, aux, palavra, 0, j, i)) {
+                    for(int k = 0; k<m; k++){
+                        free(aux[k]);
+                    }
+                    free(aux);
                     return 1;
                 }
             }
         }
     }
+    for(int k = 0; k<m; k++){
+        free(aux[k]);
+    }
+    free(aux);
     return 0;
 }
 
