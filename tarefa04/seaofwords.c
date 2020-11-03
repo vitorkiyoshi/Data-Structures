@@ -4,6 +4,7 @@
 #define MAX 21
 
 int conferir(int n, int m, char** texto, int** aux, char* palavra, int posicaoletra, int x, int y){
+    /*confere os caminhos se ficam iguais a palavra*/
     aux[y][x] = 1;
     if(texto[y][x] == palavra[posicaoletra]){
         if (palavra[posicaoletra+1] == '\00'){
@@ -26,8 +27,9 @@ int conferir(int n, int m, char** texto, int** aux, char* palavra, int posicaole
     return 0;
 }
 int conferir_inicial(int n, int m, char** texto, char* palavra){
+    /*confere todas as possibilidades a partir do primeiro ser igual*/
     int **aux = malloc(sizeof(int*) * n);
-    for(int i = 0; i<m; i++){
+    for(int i = 0; i<n; i++){
         aux[i] = malloc(sizeof(int) * m);
         for(int j = 0; j<n; j++){
             aux[i][j] = 0;
@@ -37,7 +39,7 @@ int conferir_inicial(int n, int m, char** texto, char* palavra){
         for (int j = 0; j < m; j++) {
             if(texto[i][j] == palavra[0]) {
                 if (conferir(n, m, texto, aux, palavra, 0, j, i)) {
-                    for(int k = 0; k<m; k++){
+                    for(int k = 0; k<n; k++){
                         free(aux[k]);
                     }
                     free(aux);
@@ -46,7 +48,7 @@ int conferir_inicial(int n, int m, char** texto, char* palavra){
             }
         }
     }
-    for(int k = 0; k<m; k++){
+    for(int k = 0; k<n; k++){
         free(aux[k]);
     }
     free(aux);
