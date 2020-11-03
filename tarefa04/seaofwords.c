@@ -81,5 +81,14 @@ int main(){
             }
         }
     }
+    for(int i = 0; i<q; i++){
+        free(palavras[i]);
+    }
+    for(int i = 0; i<n; i++){
+        free(texto[i]);
+    }
+    free(texto);
+    free(palavras);
+
     return 0;
 }
