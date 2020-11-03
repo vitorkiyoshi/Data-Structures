@@ -72,20 +72,10 @@ int main(){
     }
     for(int i = 0; i<q; i++){
         if(!conferir_inicial(n,m,texto, palavras[i])){
-            if(i>0){
-                printf("\nnao");
-            }
-            else{
-                printf("nao");
-            }
+            printf("nao\n");
         }
         else{
-            if(i>0){
-                printf("\nsim");
-            }
-            else{
-                printf("sim");
-            }
+            printf("sim\n");
         }
     }
     for(int i = 0; i<q; i++){
