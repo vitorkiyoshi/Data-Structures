@@ -71,53 +71,6 @@ p_no somar(p_no a,p_no b){
     return resultado;
 }
 
-p_no subtrair(p_no a, p_no b) {
-    p_no a_orig = a, b_orig = b;
-    int carry = 0;
-    p_no resultado = criar_lista();
-    while(a || b){
-        int subtracao_digitos = (a?a->dado:0) - (b?b->dado:0) + carry;
-        carry = (subtracao_digitos >= 0)? 0 : -1;
-        resultado = add_inverso(resultado, subtracao_digitos-10*carry);
-        if (a) a=a->prox;
-        if (b) b=b->prox;
-    }
-    if (carry){
-        destruir_lista(resultado);
-        resultado = subtrair(b_orig, a_orig);
-    }
-    return resultado;
-}
-
-p_no multiplicar_simples(p_no a, int b){
-    p_no resultado = criar_lista();
-    int carry = 0;
-    while(a){
-        int mult_digito = a->dado * b + carry;
-        resultado = add_inverso(resultado, mult_digito%10);
-        carry = mult_digito/10;
-        a = a->prox;
-    }
-    if(carry){
-        add_inverso(resultado, carry);
-    }
-    return resultado;
-}
-p_no multiplicar(p_no a, p_no b){
-    /*ir até a casa da unidade, ir somando cada um*/
-    p_no resultado = criar_lista();
-    while(b->prox) b=b->prox;
-    while(b){
-        p_no parcial = multiplicar_simples(a, b->dado);
-        resultado = add(resultado, 0);
-        p_no anterior = resultado;
-        resultado = somar(parcial, resultado);
-        b = b->ant;
-        destruir_lista(parcial);
-        destruir_lista(anterior);
-    }
-    return resultado;
-}
 p_no ler_lista(p_no lista){
     char c;
     while (scanf("%c", &c) == 1 && ('0'<=c && c<='9')){
