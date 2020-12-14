@@ -58,6 +58,7 @@ void enqueue_direita(p_fila f, char *name, p_no_seq lista_salas){
         f->inicio= novo;
     }
     else{
+        novo->ant=f->fim;
         f->fim->prox=novo;
     }
     f->fim=novo;
@@ -68,11 +69,12 @@ void enqueue_esquerda(p_fila f, char *name, p_no_seq lista_salas){
     novo->nome=*name;
     novo->sequencia_salas=lista_salas;
     novo->minutos=480;
-    novo->prox=NULL;
+    novo->ant=NULL;
     if(f->inicio==NULL){
         f->inicio=novo;
     }
     else{
+        novo->prox=f->inicio;
         f->inicio->ant=novo;
     }
     f->inicio=novo;
