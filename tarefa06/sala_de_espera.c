@@ -215,12 +215,12 @@ int main(){
     char nome_paciente[51];
     char prioridade[13];
     criar_Salas(especialidades);
-    lista_esp=criar_lista_seq();
     pacientesA=criar_fila();
     pacientesB=criar_fila();
     //enquanto nn ter eof pra leitura, fazer leitura das n salas
     while(scanf("\"%[^\"]50s" , nome_paciente)!=EOF){
         scanf("\" %s",prioridade);
+        lista_esp=criar_lista_seq();
         lista_esp=lerSalas(lista_esp);
         if(strcmp("normal",prioridade)==0){
             enqueue_direita(pacientesA,nome_paciente,lista_esp,480);
@@ -228,6 +228,7 @@ int main(){
         else{
             enqueue_esquerda(pacientesA,nome_paciente,lista_esp,480);
         }
+        destruir_lista_seq(lista_esp);
     }
     while(pacientesA->inicio!=NULL && pacientesB->inicio!=NULL){
             while(pacientesA!=NULL){
