@@ -178,9 +178,16 @@ void dequeue_direita(p_fila f,p_fila g){
  */
 //Funções de entrada e saída
 p_no_seq lerSalas(p_no_seq a){
-    int esp;
-    while(scanf("%i",&esp)!='\n'){
-        a = add(a,esp-1);
+    char c;
+    int sala;
+    scanf("%c",&c);
+    while(c!='\n'){
+        if(c!=' ') {
+            sala = c - '0';
+            a = add(a,sala - 1);
+        }else{
+            scanf("%c",&c);
+        }
     }
     while(a->ant){
         a=a->ant;
@@ -211,7 +218,8 @@ int main(){
     pacientesA=criar_fila();
     pacientesB=criar_fila();
     //enquanto nn ter eof pra leitura, fazer leitura das n salas
-    while(scanf("\"%[^\"]50s %s" , nome_paciente, prioridade)!=EOF){
+    while(scanf("\"%[^\"]50s" , nome_paciente)!=EOF){
+        scanf("\" %s",prioridade);
         lista_esp=lerSalas(lista_esp);
         if(strcmp("normal",prioridade)==0){
             enqueue_direita(pacientesA,nome_paciente,lista_esp,480);
