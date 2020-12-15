@@ -148,14 +148,14 @@ void dequeue_esquerda(p_fila f,p_fila g,p_fila_esp salas[]){//de uma fila pra ou
         }
     }
     if(f->fim == f->inicio && f->fim != NULL){
-        free(f->inicio);
         f->fim = f->inicio = NULL;
     } else if (f->fim!=NULL) {
         f->inicio = f->inicio->prox;
     }
     free(primeiro);
 }
-void dequeue_esquerda_esp(p_fila_esp f){//precisará apenas da dequeue esquerda, por não necessitar
+/*void dequeue_esquerda_esp(p_fila_esp f){//precisará apenas da dequeue esquerda, por não necessitar
+    p_no primeiro=f->inicio;
     if(f->fim == f->inicio && f->fim != NULL){
         f->fim = f->inicio = NULL;
         f->tamanho+=1;
@@ -163,6 +163,7 @@ void dequeue_esquerda_esp(p_fila_esp f){//precisará apenas da dequeue esquerda,
         f->inicio = f->inicio->prox;
         f->tamanho+=1;
     }
+    free(primeiro);
 }
 void dequeue_direita(p_fila f,p_fila g){
     if(f->fim == f->inicio && f->fim != NULL){
@@ -170,7 +171,7 @@ void dequeue_direita(p_fila f,p_fila g){
     } else if (f->fim!=NULL) {
         f->fim = f->fim->ant;
     }
-}
+}*/
 
 /*2 filas para pacientes, conforme atende, vai pra outra fila e vice versa
  * se a especialidade tiver disponivel, adiciona na fila dela e passa pra proxima especialidade a ser atendida
@@ -219,8 +220,8 @@ int main(){
     pacientesB=criar_fila();
     //enquanto nn ter eof pra leitura, fazer leitura das n salas
     while(scanf("\"%[^\"]50s" , nome_paciente)!=EOF){
-        scanf("\" %s",prioridade);
         lista_esp=criar_lista_seq();
+        scanf("\" %s",prioridade);
         lista_esp=lerSalas(lista_esp);
         if(strcmp("normal",prioridade)==0){
             enqueue_direita(pacientesA,nome_paciente,lista_esp,480);
@@ -245,6 +246,5 @@ int main(){
     destruirSalas(especialidades);
     destruir_fila(pacientesA);
     destruir_fila(pacientesB);
-    destruir_lista_seq(lista_esp);
     return 0;
 }
