@@ -87,6 +87,7 @@ void enqueue_direita(p_fila f, char name[51], p_no_seq lista_salas, int min){
         if (f->inicio == NULL) {
             f->inicio = novo;
         } else {
+            novo->ant = f->fim;
             f->fim->prox = novo;
         }
         f->fim = novo;
@@ -101,6 +102,7 @@ int enqueue_direita_esp(p_fila_esp f, char name[51], p_no_seq lista_salas){//ape
         if (f->inicio == NULL) {
             f->inicio = novo;
         } else {
+            novo->ant = f->fim;
             f->fim->prox = novo;
         }
         f->fim = novo;
@@ -117,10 +119,11 @@ void enqueue_esquerda(p_fila f, char name[51], p_no_seq list_salas, int min){
         strcpy(novo->nome,name);
         novo->sequencia_salas = list_salas;
         novo->minutos = min;
-        novo->prox = NULL;
+        novo->prox = f->inicio;
         if (f->inicio == NULL) {
             f->inicio = novo;
         } else {
+            novo->prox = f->inicio;
             f->inicio->ant = novo;
         }
         f->inicio = novo;
