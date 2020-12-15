@@ -90,6 +90,7 @@ void enqueue_direita(p_fila f, char name[51], p_no_seq lista_salas, int min){
             f->fim->prox = novo;
         }
         f->fim = novo;
+        free(novo);
 }
 int enqueue_direita_esp(p_fila_esp f, char name[51], p_no_seq lista_salas){//apenas enqueue esquerda
     if(f->tamanho>0) {
@@ -105,6 +106,7 @@ int enqueue_direita_esp(p_fila_esp f, char name[51], p_no_seq lista_salas){//ape
         }
         f->fim = novo;
         f->tamanho-=1;
+        free(novo);
         return 1;
     }
     else{
@@ -124,6 +126,7 @@ void enqueue_esquerda(p_fila f, char name[51], p_no_seq list_salas, int min){
             f->inicio->ant = novo;
         }
         f->inicio = novo;
+        free(novo);
 }
 void dequeue_esquerda(p_fila f,p_fila g,p_fila_esp salas[]){//de uma fila pra outra, verifica disponibilidade da sala
     int addminutos=f->inicio->minutos+10;
