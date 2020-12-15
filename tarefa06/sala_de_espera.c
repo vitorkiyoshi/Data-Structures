@@ -63,7 +63,7 @@ p_fila criar_fila(){
 }
 p_fila_esp criar_fila_esp(int tam){
     p_fila_esp f;
-    f=malloc(sizeof(Fila));
+    f=malloc(sizeof(Fila_especialidade));
     f->inicio=NULL;
     f->fim=NULL;
     f->tamanho=tam;
@@ -184,13 +184,13 @@ void dequeue_direita(p_fila f,p_fila g){
 p_no_seq lerSalas(p_no_seq a){
     char c;
     int sala;
-    while(c!='\n'){
+    do{
         scanf("%c",&c);
         if(c != ' ') {
             sala = c - '0';
             a = add(a,sala - 1);
         }
-    }
+    }while(c!='\n');
     while(a->ant){
         a=a->ant;
     }
