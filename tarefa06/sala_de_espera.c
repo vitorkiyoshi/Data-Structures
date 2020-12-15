@@ -90,7 +90,6 @@ void enqueue_direita(p_fila f, char name[51], p_no_seq lista_salas, int min){
             f->fim->prox = novo;
         }
         f->fim = novo;
-        free(novo);
 }
 int enqueue_direita_esp(p_fila_esp f, char name[51], p_no_seq lista_salas){//apenas enqueue esquerda
     if(f->tamanho>0) {
@@ -106,7 +105,6 @@ int enqueue_direita_esp(p_fila_esp f, char name[51], p_no_seq lista_salas){//ape
         }
         f->fim = novo;
         f->tamanho-=1;
-        free(novo);
         return 1;
     }
     else{
@@ -126,10 +124,10 @@ void enqueue_esquerda(p_fila f, char name[51], p_no_seq list_salas, int min){
             f->inicio->ant = novo;
         }
         f->inicio = novo;
-        free(novo);
 }
 void dequeue_esquerda(p_fila f,p_fila g,p_fila_esp salas[]){//de uma fila pra outra, verifica disponibilidade da sala
     int addminutos=f->inicio->minutos+10;
+    p_no primeiro=f->inicio;
     if(f->inicio->sequencia_salas->prox==NULL){
         if(enqueue_direita_esp(salas[f->inicio->sequencia_salas->sala],f->inicio->nome,f->inicio->sequencia_salas)){
              //basta printar resultados, nome e horario de saida
@@ -150,10 +148,12 @@ void dequeue_esquerda(p_fila f,p_fila g,p_fila_esp salas[]){//de uma fila pra ou
         }
     }
     if(f->fim == f->inicio && f->fim != NULL){
+        free(f->inicio);
         f->fim = f->inicio = NULL;
     } else if (f->fim!=NULL) {
         f->inicio = f->inicio->prox;
     }
+    free(primeiro);
 }
 void dequeue_esquerda_esp(p_fila_esp f){//precisará apenas da dequeue esquerda, por não necessitar
     if(f->fim == f->inicio && f->fim != NULL){
