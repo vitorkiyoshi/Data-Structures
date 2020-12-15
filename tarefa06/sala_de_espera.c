@@ -131,7 +131,7 @@ void dequeue_esquerda(p_fila f,p_fila g,p_fila_esp salas[]){//de uma fila pra ou
              //basta printar resultados, nome e horario de saida
              int horas= addminutos/60;
              int min=addminutos%60;
-             printf("%s %d:%d",f->inicio->nome,horas,min);
+             printf("%s %d:%d\n",f->inicio->nome,horas,min);
         }
         else{
             enqueue_direita(g,f->inicio->nome,&f->inicio->sequencia_salas,addminutos);//se não só vai pra outra fila
@@ -219,8 +219,7 @@ int main(){
             enqueue_esquerda(pacientesA,nome_paciente,lista_esp,480);
         }
     }
-    while(pacientesA->inicio!=NULL && pacientesB!=NULL){
-        if(pacientesA!=NULL){
+    while(pacientesA->inicio!=NULL && pacientesB->inicio!=NULL){
             while(pacientesA!=NULL){
                 dequeue_esquerda(pacientesA,pacientesB,especialidades);//após isso, deve-se resetar as salas
             }
@@ -231,7 +230,6 @@ int main(){
             }
             destruirSalas(especialidades);
             criar_Salas(especialidades);
-        }
     }
 
     return 0;
