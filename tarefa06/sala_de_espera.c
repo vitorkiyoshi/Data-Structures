@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 //listas ligadas
 typedef struct No{
-    char *nome;
+    char nome[51];
     int minutos;
     struct No_sequencia_salas *sequencia_salas;
     struct No *prox;
@@ -29,11 +30,11 @@ p_no_seq criar_lista_seq(){
 }
 void destruir_lista_seq(p_no_seq lista){
     if(lista!=NULL){
-        destruir_lista(lista->prox);
+        destruir_lista_seq(lista->prox);
         free(lista);
     }
 }
-p_no add(p_no_seq lista, int numero){
+p_no_seq add(p_no_seq lista, int numero){
     p_no_seq novo= malloc(sizeof(No_sequencia_salas));
     novo->ant = lista;
     novo->sala = numero;
@@ -76,10 +77,10 @@ void destruir_fila_esp(p_fila_esp f){
     destruir_lista(f->inicio);
     free(f);
 }
-void enqueue_direita(p_fila f, char name[51], p_no_seq *lista_salas, int min){
+void enqueue_direita(p_fila f, char name[51], p_no_seq lista_salas, int min){
         p_no novo;
         novo = malloc(sizeof(No));
-        novo->nome = *name;
+        strcpy(novo->nome,name);
         novo->sequencia_salas = lista_salas;
         novo->minutos = min;
         novo->prox = NULL;
@@ -90,11 +91,11 @@ void enqueue_direita(p_fila f, char name[51], p_no_seq *lista_salas, int min){
         }
         f->fim = novo;
 }
-int enqueue_direita_esp(p_fila_esp f, char name[51], p_no_seq *lista_salas){//apenas enqueue esquerda
+int enqueue_direita_esp(p_fila_esp f, char name[51], p_no_seq lista_salas){//apenas enqueue esquerda
     if(f->tamanho>0) {
         p_no novo;
         novo = malloc(sizeof(No));
-        novo->nome = *name;
+        strcpy(novo->nome,name);
         novo->sequencia_salas = lista_salas;
         novo->prox = NULL;
         if (f->inicio == NULL) {
@@ -110,10 +111,10 @@ int enqueue_direita_esp(p_fila_esp f, char name[51], p_no_seq *lista_salas){//ap
         return 0;
     }
 }
-void enqueue_esquerda(p_fila f, char name[51], p_no_seq *list_salas, int min){
+void enqueue_esquerda(p_fila f, char name[51], p_no_seq list_salas, int min){
         p_no novo;
         novo = malloc(sizeof(No));
-        novo->nome = *name;
+        strcpy(novo->nome,name);
         novo->sequencia_salas = list_salas;
         novo->minutos = min;
         novo->prox = NULL;
@@ -127,22 +128,22 @@ void enqueue_esquerda(p_fila f, char name[51], p_no_seq *list_salas, int min){
 void dequeue_esquerda(p_fila f,p_fila g,p_fila_esp salas[]){//de uma fila pra outra, verifica disponibilidade da sala
     int addminutos=f->inicio->minutos+10;
     if(f->inicio->sequencia_salas->prox==NULL){
-        if(enqueue_direita_esp(salas[f->inicio->sequencia_salas->sala],f->inicio->nome,&f->inicio->sequencia_salas)){
+        if(enqueue_direita_esp(salas[f->inicio->sequencia_salas->sala],f->inicio->nome,f->inicio->sequencia_salas)){
              //basta printar resultados, nome e horario de saida
              int horas= addminutos/60;
              int min=addminutos%60;
              printf("%s %d:%d\n",f->inicio->nome,horas,min);
         }
         else{
-            enqueue_direita(g,f->inicio->nome,&f->inicio->sequencia_salas,addminutos);//se não só vai pra outra fila
+            enqueue_direita(g,f->inicio->nome,f->inicio->sequencia_salas,addminutos);//se não só vai pra outra fila
         }
     }
     else{
-        if(enqueue_direita_esp(salas[f->inicio->sequencia_salas->sala],f->inicio->nome,&f->inicio->sequencia_salas)){
-            enqueue_direita(g,f->inicio->nome,&f->inicio->sequencia_salas->prox,addminutos);//espera proximo atendimento
+        if(enqueue_direita_esp(salas[f->inicio->sequencia_salas->sala],f->inicio->nome,f->inicio->sequencia_salas)){
+            enqueue_direita(g,f->inicio->nome,f->inicio->sequencia_salas->prox,addminutos);//espera proximo atendimento
         }
         else{
-            enqueue_direita(g,f->inicio->nome,&f->inicio->sequencia_salas,addminutos);
+            enqueue_direita(g,f->inicio->nome,f->inicio->sequencia_salas,addminutos);
         }
     }
     if(f->fim == f->inicio && f->fim != NULL){
@@ -212,7 +213,7 @@ int main(){
     //enquanto nn ter eof pra leitura, fazer leitura das n salas
     while(scanf("\"%[^\"]50s %s" , nome_paciente, prioridade)!=EOF){
         lista_esp=lerSalas(lista_esp);
-        if(prioridade=="normal"){
+        if(strcmp("normal",prioridade)==0){
             enqueue_direita(pacientesA,nome_paciente,lista_esp,480);
         }
         else{
@@ -231,6 +232,9 @@ int main(){
             destruirSalas(especialidades);
             criar_Salas(especialidades);
     }
-
+    destruirSalas(especialidades);
+    destruir_fila(pacientesA);
+    destruir_fila(pacientesB);
+    destruir_lista_seq(lista_esp);
     return 0;
 }
