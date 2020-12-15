@@ -180,13 +180,11 @@ void dequeue_direita(p_fila f,p_fila g){
 p_no_seq lerSalas(p_no_seq a){
     char c;
     int sala;
-    scanf("%c",&c);
     while(c!='\n'){
-        if(c!=' ') {
+        scanf("%c",&c);
+        if(c != ' ') {
             sala = c - '0';
             a = add(a,sala - 1);
-        }else{
-            scanf("%c",&c);
         }
     }
     while(a->ant){
