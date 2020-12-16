@@ -69,5 +69,70 @@ Paciente *dequeue(Fila *fila){
 
 int main(){
     /*Uso agora de 10 filas, em que vão se modificando ao longo do processo*/
+    int tamanhos[9] = {10,2,5,3,4,7,2,1,4};
+    int maximo_novos = 0;
+    for(int i = 0; i<9;i++){
+        maximo_novos += tamanhos[i];
+    }
+    Fila filas[9];
+    for(int i = 0; i<9;i++){
+        filas[i] = criar_fila();
+    }
+    Paciente **pacientes_em_espera = malloc(sizeof(Paciente*) * maximo_novos);
+    int posicao = 0;
+    while(!fim_entrada){
+        Paciente *atual = ler_paciente();
+        if(!fim_entrada) {
+            atual->ordem = posicao;
+            if (strcmp("normal", atual->privilegio) == 0) {
+                queue_normal(&filas[atual->atendimentos->valor], atual);
+            } else {
+                queue_prioritario(&filas[atual->atendimentos->valor], atual);
+            }
+            posicao += 1;
+        } else {
+            free(atual);
+        }
+    }
+    int numero_saidos_da_fila;
+    int tempo = 490;
+    while(1){
+        int numero_saidos_da_fila = 0;
+        for(int i = 0; i<9;i++){
+            for(int j=0;j<tamanhos[i];j++){
+                Paciente *saido = dequeue(&filas[i]);
+                if (saido != NULL){
+                    pacientes_em_espera[numero_saidos_da_fila] = saido;
+                    numero_saidos_da_fila += 1;
+                } else{
+                    break;
+                }
+            }
+        }
+        if(numero_saidos_da_fila == 0){
+            break;
+        }
+        qsort(pacientes_em_espera,numero_saidos_da_fila,sizeof(Paciente*), comparar_pacientes);
+        for(int i = 0; i<numero_saidos_da_fila;i++){
+            Paciente *atual = pacientes_em_espera[i];
+            No *anterior = atual->atendimentos;
+            atual->atendimentos = anterior->proximo;
+            free(anterior);
+            if(atual->atendimentos == NULL){
+                int horas = tempo/60;
+                int minutos = tempo%60;
+                printf("%02i:%02i %s\n",horas,minutos,atual->nome);
+                free(atual);
+            } else {
+                if (strcmp("normal", atual->privilegio) == 0) {
+                    queue_normal(&filas[atual->atendimentos->valor], atual);
+                } else {
+                    queue_prioritario(&filas[atual->atendimentos->valor], atual);
+                }
+            }
+        }
+        tempo += 10;
+    }
+    free(pacientes_em_espera);
     return 0;
 }
