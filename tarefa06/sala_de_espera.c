@@ -67,6 +67,35 @@ Paciente *dequeue(Fila *fila){
     }
 }
 
+Paciente *ler_paciente(){
+    Paciente *paciente = malloc(sizeof(struct Paciente));
+    paciente->atendimentos = NULL;
+    paciente->anterior = paciente->proximo = NULL;
+    if(scanf("\"%50[^\"]s" , paciente->nome) == EOF){
+        fim_entrada = 1;
+        return paciente;
+    }
+    scanf("\" %s", paciente->privilegio);
+    char c;
+    int sala;
+    do{
+        scanf("%c",&c);
+        if(c >= '1' && c <= '9') {
+            sala = c - '0';
+            paciente->atendimentos = add(paciente->atendimentos,sala - 1);
+        }
+    }while(c!='\n');
+    while(paciente->atendimentos->anterior){
+        paciente->atendimentos = paciente->atendimentos->anterior;
+    }
+    return paciente;
+}
+int comparar_pacientes(Paciente *a, Paciente *b){
+    int valor_1 = a->ordem;
+    int valor_2 = b->ordem;
+    return (valor_1 > valor_2) - (valor_1 < valor_2);
+}
+
 int main(){
     /*Uso agora de 10 filas, em que vão se modificando ao longo do processo*/
     int tamanhos[9] = {10,2,5,3,4,7,2,1,4};
