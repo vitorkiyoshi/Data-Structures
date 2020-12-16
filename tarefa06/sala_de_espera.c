@@ -1,229 +1,73 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//listas ligadas
-typedef struct No{
-    char nome[51];
-    int minutos;
-    struct No_sequencia_salas *sequencia_salas;
-    struct No *prox;
-    struct No *ant;
+int fim_entrada = 0;
+typedef struct No {
+    int valor;
+    struct No *proximo;
+    struct No *anterior;
 } No;
-typedef struct No *p_no;
-p_no criar_lista(){
-    return NULL;
-}
-void destruir_lista(p_no lista){
-    if(lista!=NULL){
-        destruir_lista(lista->prox);
-        free(lista);
+typedef struct Paciente{
+    char nome[51];
+    char privilegio[13];
+    int ordem;
+    struct Paciente *proximo;
+    struct Paciente *anterior;
+    No *atendimentos;
+} Paciente;
+No *add(No *lista, int numero){
+    No *novo_no = malloc(sizeof(No));
+    novo_no->valor = numero;
+    novo_no->anterior = lista;
+    novo_no->proximo = NULL;
+    if (lista != NULL){
+        lista->proximo = novo_no;
     }
+    return novo_no;
 }
-typedef struct No_sequencia_salas{  /*LISTA LIGADA PARA ESPECIALIDADES*/
-    int sala;
-    struct No_sequencia_salas *prox;
-    struct No_sequencia_salas *ant;
-} No_sequencia_salas;
-typedef struct No_sequencia_salas *p_no_seq;
-p_no_seq criar_lista_seq(){
-    return NULL;
-}
-void destruir_lista_seq(p_no_seq lista){
-    if(lista!=NULL){
-        destruir_lista_seq(lista->ant);
-        free(lista);
-    }
-}
-p_no_seq add(p_no_seq lista, int numero){
-    p_no_seq novo= malloc(sizeof(No_sequencia_salas));
-    novo->ant = lista;
-    novo->prox = NULL;
-    novo->sala = numero;
-    if(lista){
-        lista->prox=novo;
-    }
-    return novo;
-}
-//FILA DEQUE em pacientes, outra fila simples(salas)
-typedef struct{
-    p_no inicio,fim;
+typedef struct Fila{
+    Paciente *primeiro;
+    Paciente *ultimo;
 } Fila;
-typedef struct{
-    p_no inicio,fim;
-    int tamanho;
-} Fila_especialidade;
-typedef Fila *p_fila;
-typedef Fila_especialidade *p_fila_esp;
-p_fila criar_fila(){
-    p_fila f;
-    f=malloc(sizeof(Fila));
-    f->inicio=NULL;
-    f->fim=NULL;
-    return f;
+Fila criar_fila(){
+    Fila fila;
+    fila.primeiro = NULL;
+    fila.ultimo = NULL;
+    return fila;
 }
-p_fila_esp criar_fila_esp(int tam){
-    p_fila_esp f;
-    f=malloc(sizeof(Fila_especialidade));
-    f->inicio=NULL;
-    f->fim=NULL;
-    f->tamanho=tam;
-    return f;
-}
-void destruir_fila(p_fila f){
-    destruir_lista(f->inicio);
-    free(f);
-}
-void destruir_fila_esp(p_fila_esp f){
-    destruir_lista(f->inicio);
-    free(f);
-}
-void enqueue_direita(p_fila f, char name[51], p_no_seq lista_salas, int min){
-    p_no novo;
-    novo = malloc(sizeof(No));
-    strcpy(novo->nome,name);
-    novo->sequencia_salas = lista_salas;
-    novo->minutos = min;
-    novo->prox = NULL;
-    if (f->inicio == NULL) {
-        f->inicio = novo;
+void queue_normal(Fila *fila, Paciente *paciente){
+    if(fila->primeiro == NULL){
+        fila->primeiro = fila->ultimo = paciente;
     } else {
-        novo->ant = f->fim;
-        f->fim->prox = novo;
+        fila->ultimo->proximo = paciente;
+        paciente->anterior = fila->ultimo;
+        fila->ultimo = paciente;
     }
-    f->fim = novo;
 }
-int enqueue_direita_esp(p_fila_esp f, char name[51], p_no_seq lista_salas){//apenas enqueue esquerda
-    if(f->tamanho>0) {
-        p_no novo;
-        novo = malloc(sizeof(No));
-        strcpy(novo->nome,name);
-        novo->sequencia_salas = lista_salas;
-        novo->prox = NULL;
-        if (f->inicio == NULL) {
-            f->inicio = novo;
+void queue_prioritario(Fila *fila, Paciente *paciente){
+    if(fila->primeiro == NULL){
+        fila->primeiro = fila->ultimo = paciente;
+    } else {
+        fila->primeiro->anterior = paciente;
+        paciente->proximo = fila->primeiro;
+        fila->primeiro = paciente;
+    }
+}
+Paciente *dequeue(Fila *fila){
+    if(fila->primeiro == NULL){
+        return NULL;
+    } else {
+        Paciente *primeiro = fila->primeiro;
+        if (fila->primeiro == fila->ultimo){
+            fila->primeiro = fila->ultimo = NULL;
         } else {
-            novo->ant = f->fim;
-            f->fim->prox = novo;
+            fila->primeiro = fila->primeiro->proximo;
         }
-        f->fim = novo;
-        f->tamanho-=1;
-        return 1;
+        return primeiro;
     }
-    else{
-        return 0;
-    }
-}
-void enqueue_esquerda(p_fila f, char name[51], p_no_seq list_salas, int min){
-    p_no novo;
-    novo = malloc(sizeof(No));
-    strcpy(novo->nome,name);
-    novo->sequencia_salas = list_salas;
-    novo->minutos = min;
-    novo->prox = f->inicio;
-    if (f->inicio == NULL) {
-        f->inicio = novo;
-    } else {
-        novo->prox = f->inicio;
-        f->inicio->ant = novo;
-    }
-    f->inicio = novo;
-}
-void dequeue_esquerda(p_fila f,p_fila g,p_fila_esp salas[]){//de uma fila pra outra, verifica disponibilidade da sala
-    int addminutos=f->inicio->minutos+10;
-    p_no primeiro=f->inicio;
-    if(f->inicio->sequencia_salas->prox==NULL){
-        if(enqueue_direita_esp(salas[f->inicio->sequencia_salas->sala],f->inicio->nome,f->inicio->sequencia_salas)){
-            //basta printar resultados, nome e horario de saida
-            int horas= addminutos/60;
-            int min= addminutos%60;
-            printf("%02i:%02i %s\n",horas,min,f->inicio->nome); // printa saída e nn transita para outra fila
-            destruir_lista_seq(f->inicio->sequencia_salas);
-        }
-        else{
-            enqueue_direita(g,f->inicio->nome,f->inicio->sequencia_salas,addminutos);//se não só vai pra outra fila
-        }
-    }
-    else{
-        if(enqueue_direita_esp(salas[f->inicio->sequencia_salas->sala],f->inicio->nome,f->inicio->sequencia_salas)){
-            enqueue_direita(g,f->inicio->nome,f->inicio->sequencia_salas->prox,addminutos);//espera proximo atendimento
-        }
-        else{
-            enqueue_direita(g,f->inicio->nome,f->inicio->sequencia_salas,addminutos); //continua sem atendimento
-        }
-    }
-    if(f->fim == f->inicio && f->fim != NULL){
-        f->fim = NULL;
-        f->inicio = NULL;
-    } else if (f->fim!=NULL) {
-        f->inicio = f->inicio->prox;
-    }
-    free(primeiro);
 }
 
-p_no_seq lerSalas(p_no_seq a){
-    char c;
-    int sala;
-    do{
-        scanf("%c",&c);
-        if(c >= '1' && c <= '9') {
-            sala = c - '0';
-            a = add(a,sala - 1);
-        }
-    }while(c!='\n');
-    while(a->ant){
-        a=a->ant;
-    }
-    return a;
-}
-void criar_Salas(p_fila_esp esp[]){
-    int i;
-    int tam_esp[9]={10,2,5,3,4,7,2,1,4};//setando especialidades
-    for(i=0;i<9;i++){
-        esp[i]=criar_fila_esp(tam_esp[i]);
-    }
-}
-void destruirSalas(p_fila_esp esp[]){
-    int i;
-    for(i=0;i<9;i++){
-        destruir_fila_esp(esp[i]);
-    }
-}
 int main(){
-    p_fila pacientesA,pacientesB;
-    p_fila_esp especialidades[9];
-    p_no_seq lista_esp;
-    char nome_paciente[51];
-    char prioridade[13];
-    criar_Salas(especialidades);
-    pacientesA=criar_fila();
-    pacientesB=criar_fila();
-    //enquanto nn ter eof pra leitura, fazer leitura das n salas
-    while(scanf("\"%[^\"]50s" , nome_paciente)!=EOF){
-        lista_esp=criar_lista_seq();
-        scanf("\" %s",prioridade);
-        lista_esp=lerSalas(lista_esp);
-        if(strcmp("normal",prioridade)==0){
-            enqueue_direita(pacientesA,nome_paciente,lista_esp,480);
-        }
-        else{
-            enqueue_esquerda(pacientesA,nome_paciente,lista_esp,480);
-        }
-        //destruir_lista_seq(lista_esp);
-    }
-    while(pacientesA->inicio!=NULL || pacientesB->inicio!=NULL){
-        while(pacientesA->inicio!=NULL){
-            dequeue_esquerda(pacientesA,pacientesB,especialidades);//após isso, deve-se resetar as salas
-        }
-        destruirSalas(especialidades);
-        criar_Salas(especialidades);
-        while(pacientesB->inicio!=NULL){
-            dequeue_esquerda(pacientesB,pacientesA,especialidades);//após isso, deve-se resetar as salas
-        }
-        destruirSalas(especialidades);
-        criar_Salas(especialidades);
-    }
-    destruirSalas(especialidades);
-    destruir_fila(pacientesA);
-    destruir_fila(pacientesB);
+    /*Uso agora de 10 filas, em que vão se modificando ao longo do processo*/
     return 0;
 }
