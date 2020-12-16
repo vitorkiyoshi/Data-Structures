@@ -135,8 +135,9 @@ void dequeue_esquerda(p_fila f,p_fila g,p_fila_esp salas[]){//de uma fila pra ou
         if(enqueue_direita_esp(salas[f->inicio->sequencia_salas->sala],f->inicio->nome,f->inicio->sequencia_salas)){
              //basta printar resultados, nome e horario de saida
              int horas= addminutos/60;
-             int min=addminutos%60;
-             printf("%d:%d %s\n",horas,min,f->inicio->nome);
+             int min= addminutos%60;
+             printf("%i:%i %s\n",horas,min,f->inicio->nome); // printa saída e nn transita para outra fila
+             destruir_lista_seq(f->inicio->sequencia_salas);
         }
         else{
             enqueue_direita(g,f->inicio->nome,f->inicio->sequencia_salas,addminutos);//se não só vai pra outra fila
@@ -147,10 +148,10 @@ void dequeue_esquerda(p_fila f,p_fila g,p_fila_esp salas[]){//de uma fila pra ou
             enqueue_direita(g,f->inicio->nome,f->inicio->sequencia_salas->prox,addminutos);//espera proximo atendimento
         }
         else{
-            enqueue_direita(g,f->inicio->nome,f->inicio->sequencia_salas,addminutos);
+            enqueue_direita(g,f->inicio->nome,f->inicio->sequencia_salas,addminutos); //continua sem atendimento
         }
     }
-    if(f->fim == f->inicio && f->fim != NULL){
+    if(f->fim == f->inicio && f->fim != NULL){//parte de retirar do inicio o paciente
         f->fim = f->inicio = NULL;
     } else if (f->fim!=NULL) {
         f->inicio = f->inicio->prox;
@@ -184,7 +185,8 @@ void dequeue_direita(p_fila f,p_fila g){
  * sempre que passar pro proximo, adicionar 10 min ao paciente
  */
 //Funções de entrada e saída
-p_no_seq lerSalas(p_no_seq a){
+p_no_seq lerSalas(){
+    p_no_seq a=criar_lista_seq();
     char c;
     int sala;
     do{
@@ -223,16 +225,15 @@ int main(){
     pacientesB=criar_fila();
     //enquanto nn ter eof pra leitura, fazer leitura das n salas
     while(scanf("\"%[^\"]50s" , nome_paciente)!=EOF){
-        lista_esp=criar_lista_seq();
+        lista_esp = criar_lista_seq();
         scanf("\" %s",prioridade);
-        lista_esp=lerSalas(lista_esp);
+        lista_esp=lerSalas();
         if(strcmp("normal",prioridade)==0){
             enqueue_direita(pacientesA,nome_paciente,lista_esp,480);
         }
-        else{
-            enqueue_esquerda(pacientesA,nome_paciente,lista_esp,480);
+        else {
+            enqueue_esquerda(pacientesA, nome_paciente, lista_esp, 480);
         }
-        destruir_lista_seq(lista_esp);
     }
     while(pacientesA->inicio!=NULL && pacientesB->inicio!=NULL){
             while(pacientesA!=NULL){
@@ -249,5 +250,6 @@ int main(){
     destruirSalas(especialidades);
     destruir_fila(pacientesA);
     destruir_fila(pacientesB);
+    destruir_lista_seq(lista_esp);
     return 0;
 }
