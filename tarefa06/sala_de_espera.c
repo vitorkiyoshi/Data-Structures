@@ -30,7 +30,7 @@ p_no_seq criar_lista_seq(){
 }
 void destruir_lista_seq(p_no_seq lista){
     if(lista!=NULL){
-        destruir_lista_seq(lista->prox);
+        destruir_lista_seq(lista->ant);
         free(lista);
     }
 }
@@ -152,7 +152,8 @@ void dequeue_esquerda(p_fila f,p_fila g,p_fila_esp salas[]){//de uma fila pra ou
         }
     }
     if(f->fim == f->inicio && f->fim != NULL){
-        f->fim = f->inicio = NULL;
+        f->fim = NULL;
+        f->inicio = NULL;
     } else if (f->fim!=NULL) {
         f->inicio = f->inicio->prox;
     }
@@ -221,7 +222,6 @@ int main(){
         destruirSalas(especialidades);
         criar_Salas(especialidades);
     }
-    destruir_lista_seq(lista_esp);
     destruirSalas(especialidades);
     destruir_fila(pacientesA);
     destruir_fila(pacientesB);
