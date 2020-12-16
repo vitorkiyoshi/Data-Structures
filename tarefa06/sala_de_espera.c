@@ -123,7 +123,6 @@ int main(){
             free(atual);
         }
     }
-    int numero_saidos_da_fila;
     int tempo = 490;
     while(1){
         int numero_saidos_da_fila = 0;
