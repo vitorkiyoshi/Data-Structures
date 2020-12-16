@@ -136,7 +136,7 @@ void dequeue_esquerda(p_fila f,p_fila g,p_fila_esp salas[]){//de uma fila pra ou
             //basta printar resultados, nome e horario de saida
             int horas= addminutos/60;
             int min= addminutos%60;
-            printf("%02i:%i %s\n",horas,min,f->inicio->nome); // printa saída e nn transita para outra fila
+            printf("%02i:%02i %s\n",horas,min,f->inicio->nome); // printa saída e nn transita para outra fila
             destruir_lista_seq(f->inicio->sequencia_salas);
         }
         else{
