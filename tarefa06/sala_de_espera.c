@@ -30,7 +30,7 @@ p_no_seq criar_lista_seq(){
 }
 void destruir_lista_seq(p_no_seq lista){
     if(lista!=NULL){
-        destruir_lista_seq(lista->prox);
+        destruir_lista_seq(lista->ant);
         free(lista);
     }
 }
@@ -224,8 +224,8 @@ int main(){
     pacientesA=criar_fila();
     pacientesB=criar_fila();
     //enquanto nn ter eof pra leitura, fazer leitura das n salas
+    lista_esp = criar_lista_seq();
     while(scanf("\"%[^\"]50s" , nome_paciente)!=EOF){
-        lista_esp = criar_lista_seq();
         scanf("\" %s",prioridade);
         lista_esp=lerSalas();
         if(strcmp("normal",prioridade)==0){
