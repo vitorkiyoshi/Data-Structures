@@ -96,8 +96,7 @@ int comparar_pacientes(const void *a, const void *b){
     return (valor_1 > valor_2) - (valor_1 < valor_2);
 }
 
-int main(){
-    /*Uso agora de 10 filas, em que vão se modificando ao longo do processo*/
+int main(){//pegar as filas de tamanhos definidos, enquanto todos nn sairem, continua loop
     int tamanhos[9] = {10,2,5,3,4,7,2,1,4};
     int maximo_novos = 0;
     for(int i = 0; i<9;i++){
@@ -123,9 +122,10 @@ int main(){
             free(atual);
         }
     }
+    int numero_saidos_da_fila;
     int tempo = 490;
-    while(1){
-        int numero_saidos_da_fila = 0;
+    do{
+        numero_saidos_da_fila = 0;
         for(int i = 0; i<9;i++){
             for(int j=0;j<tamanhos[i];j++){
                 Paciente *saido = dequeue(&filas[i]);
@@ -137,30 +137,29 @@ int main(){
                 }
             }
         }
-        if(numero_saidos_da_fila == 0){
-            break;
-        }
-        qsort(pacientes_em_espera,numero_saidos_da_fila,sizeof(Paciente*), comparar_pacientes);
-        for(int i = 0; i<numero_saidos_da_fila;i++){
-            Paciente *atual = pacientes_em_espera[i];
-            No *anterior = atual->atendimentos;
-            atual->atendimentos = anterior->proximo;
-            free(anterior);
-            if(atual->atendimentos == NULL){
-                int horas = tempo/60;
-                int minutos = tempo%60;
-                printf("%02i:%02i %s\n",horas,minutos,atual->nome);
-                free(atual);
-            } else {
-                if (strcmp("normal", atual->privilegio) == 0) {
-                    queue_normal(&filas[atual->atendimentos->valor], atual);
+        if (numero_saidos_da_fila != 0) {
+            qsort(pacientes_em_espera, numero_saidos_da_fila, sizeof(Paciente *), comparar_pacientes);
+            for (int i = 0; i < numero_saidos_da_fila; i++) {
+                Paciente *atual = pacientes_em_espera[i];
+                No *anterior = atual->atendimentos;
+                atual->atendimentos = anterior->proximo;
+                free(anterior);
+                if (atual->atendimentos == NULL) {
+                    int horas = tempo / 60;
+                    int minutos = tempo % 60;
+                    printf("%02i:%02i %s\n", horas, minutos, atual->nome);
+                    free(atual);
                 } else {
-                    queue_prioritario(&filas[atual->atendimentos->valor], atual);
+                    if (strcmp("normal", atual->privilegio) == 0) {
+                        queue_normal(&filas[atual->atendimentos->valor], atual);
+                    } else {
+                        queue_prioritario(&filas[atual->atendimentos->valor], atual);
+                    }
                 }
             }
+            tempo += 10;
         }
-        tempo += 10;
-    }
+    } while(numero_saidos_da_fila != 0);
     free(pacientes_em_espera);
     return 0;
 }
