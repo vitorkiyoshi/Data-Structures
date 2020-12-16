@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 int fim_entrada = 0;
-typedef struct No {/*fila agora possui sistema de privilegios quando entra para uma nova fila*/
+typedef struct No {/*fila agora possui sistema de privilegios quando entra para uma novafila*/
     int valor;
     struct No *proximo;
     struct No *anterior;
