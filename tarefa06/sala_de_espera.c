@@ -91,8 +91,8 @@ Paciente *ler_paciente(){
     return paciente;
 }
 int comparar_pacientes(const void *a, const void *b){
-    int valor_1 = ((Paciente *)a)->ordem;
-    int valor_2 = ((Paciente *)b)->ordem;
+    int valor_1 = (*(Paciente **)a)->ordem;
+    int valor_2 = (*(Paciente **)b)->ordem;
     return (valor_1 > valor_2) - (valor_1 < valor_2);
 }
 
