@@ -140,6 +140,7 @@ p_no achar_dupla(p_no raiz, p_no atual, int objetivo){
     if(atual->valor < objetivo) {
         if(atual->visitado == 0) {
             atual->visitado = 1;
+            int valor_atual=atual->valor;
             resultado = buscar(raiz, objetivo - atual->valor);
             if (resultado != NULL && resultado->visitado == 0) {
                 atual = buscar(raiz, valor_atual);
