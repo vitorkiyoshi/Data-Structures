@@ -1,169 +1,199 @@
-#include <stdio.h>
-#include <stdlib.h>
-typedef struct No {
-    int chave;
-    int verif;
-    char texto[4];
-    struct No *direita;
-    struct No *esquerda;
-} No;
-typedef struct No *p_no;
-p_no criarArvore(p_no raiz){
-    raiz->texto=NULL;
-    raiz->chave=NULL;
-    raiz->esquerda=NULL;
-    raiz->direita=NULL;
-    raiz->verif=NULL;
-    return raiz;
+#include "arvore_binaria.h"
+void destruir_arvore(p_no raiz){
+    if(raiz == NULL){
+        return;
+    } else{
+        destruir_arvore(raiz->esquerdo);
+        destruir_arvore(raiz->direito);
+        free(raiz->texto);
+        free(raiz);
+    }
 }
-p_no buscar(p_no raiz,int chave){
-    if(raiz==NULL || chave==raiz->chave){
-        return raiz;
-    }
-    if(chave< raiz->chave){
-        return buscar(raiz->esquerda,chave);
-    }
-    else{
-        return buscar(raiz->direita,chave);
-    }
+p_no criar_no(int valor, char *texto) {
+    p_no novo = malloc(sizeof(No));
+    novo->esquerdo = novo->direito = novo->pai = NULL;
+    novo->valor = valor;
+    novo->texto = texto;
+    novo->visitado = 0;
 }
 
-p_no inserir(p_no raiz, int chave,char txt[4]){
-    p_no novo;
-    if(raiz == NULL){
-        novo=malloc(sizeof(No));
-        novo->esquerda=novo->direita==NULL;
-        novo->chave = chave;
-        novo->texto=txt;
-        novo->verif=0;
-        return novo;
+p_no inserir_no(p_no raiz, p_no novo_no) {
+    if (raiz == NULL) {
+        return novo_no;
     }
-    if(chave < raiz->chave){
-        raiz->esquerda= inserir(raiz->esquerda,chave);
+    p_no atual = raiz;
+    while (atual != NULL) {
+        if (atual->valor > novo_no->valor) {
+            if (atual->esquerdo == NULL) {
+                atual->esquerdo = novo_no;
+                break;
+            } else {
+                atual = atual->esquerdo;
+            }
+        } else if (atual->valor < novo_no->valor) {
+            if (atual->direito == NULL) {
+                atual->direito = novo_no;
+                break;
+            } else {
+                atual = atual->direito;
+            }
+        }
     }
-    else{
-        raiz->direita= inserir(raiz->direita,chave);
-    }
+    novo_no->pai = atual;
     return raiz;
 }
-p_no remover_rec(p_no raiz, int chave){
-    if(raiz == NULL){
+
+p_no adicionar(p_no raiz, int valor, char *texto) {
+    p_no novo = criar_no(valor, texto);
+    return inserir_no(raiz, novo);
+}
+
+p_no buscar(p_no raiz, int valor) {
+    p_no atual = raiz;
+    while (atual != NULL) {
+        if (atual->valor > valor) {
+            atual = atual->esquerdo;
+        } else if (atual->valor < valor) {
+            atual = atual->direito;
+        } else {
+            return atual;
+        }
+    }
+    return NULL;
+}
+
+p_no remover(p_no raiz, int valor) {
+    if (raiz == NULL) {
         return NULL;
     }
-    if(chave<raiz->chave){
-        raiz->esquerda=remover_rec(raiz->esquerda,chave);
+    else if(raiz->valor > valor) {
+        raiz->esquerdo = remover(raiz->esquerdo, valor);
     }
-    else if(chave>raiz->chave){
-        raiz->direita=remover_rec(raiz->direita,chave);
-    }
-    else if(raiz->esquerda==NULL){
-        return raiz->dir;
-    }
-    else if(raiz->direita==NULL){
-        return raiz->esquerda;
+    else if(raiz->valor < valor) {
+        raiz->direito = remover(raiz->direito, valor);
     }
     else{
-        remover_sucessor(raiz);
+        if (raiz->esquerdo == NULL && raiz->direito == NULL) {
+            free(raiz);
+            free(raiz->texto);
+            raiz = NULL;
+        } else if(raiz->esquerdo == NULL) {
+            p_no temp = raiz;
+            raiz = raiz->direito;
+            raiz->pai = temp->pai;
+            free(temp->texto);
+            free(temp);
+        }
+        else if(raiz->direito == NULL) {
+            p_no temp = raiz;
+            raiz = raiz->esquerdo;
+            raiz->pai = temp->pai;
+            free(temp->texto);
+            free(temp);
+        } else{
+            p_no min = raiz->esquerdo;
+            while (min->direito != NULL) {
+                min = min->direito;
+            }
+            raiz->valor = min->valor;
+            free(raiz->texto);
+            raiz->texto = malloc(strlen(min->texto) + 1);
+            strcpy(raiz->texto, min->texto);
+            min->valor = valor;
+            raiz->esquerdo = remover(raiz->esquerdo, valor);
+        }
     }
     return raiz;
 }
-void remover_sucessor(p_no raiz){
-    p_no min=raiz->direita;
-    p_no pai=raiz;
-    while(min->esquerda !=NULL){
-        pai=min;
-        min=min->esquerda;
-    }
-    if(pai->esquerda==min){
-        pai->esquerda=min->direita;
-    }
-    else{
-        pai->direita=min->direita;
-    }
-    raiz->chave=min->chave;
+void print_arvore(p_no raiz){
+    if(raiz == NULL) return;
+    print_arvore(raiz->esquerdo);
+    printf("%s", raiz->texto);
+    print_arvore(raiz->direito);
 }
+p_no combinar(p_no *raiz, p_no a, p_no b){
+    /*combinar toma um ponteiro, já que pode alterar a raiz da árvore, mas
+    não pode retornar a nova raiz, já que precisa retornar o novo nó criado,
+     para que a combinação possa ser finalizada.*/
+    char *novo_texto = malloc(strlen(a->texto) + strlen(b->texto) + 1);
+    strcpy(novo_texto, a->texto);
+    strcat(novo_texto, b->texto);
+    int novo_valor = a->valor + b->valor;
+    *raiz = adicionar(*raiz,novo_valor, novo_texto);
+    *raiz = remover(*raiz, a->valor);
+    *raiz = remover(*raiz, b->valor);
+    p_no novo = buscar(*raiz, novo_valor);
+    return novo;
+}
+
 p_no achar_dupla(p_no raiz, p_no atual, int objetivo){
     if (atual == NULL) return NULL;
     p_no resultado;
-    if((resultado = achar_dupla(raiz, atual->direita, objetivo))){
+    resultado = achar_dupla(raiz, atual->esquerdo, objetivo);
+    if(resultado != NULL){
         return resultado;
     }
-    if(atual->valor < objetivo){
+    if(atual->valor < objetivo) {
         if(atual->visitado == 0) {
             atual->visitado = 1;
-            p_no resultado = buscar_iterativo(raiz, objetivo - atual->valor);
-            if (resultado != NULL || resultado->visitado == 0) {
-                return combinar(raiz, atual, resultado);
+            resultado = buscar(raiz, objetivo - atual->valor);
+            if (resultado != NULL && resultado->visitado == 0) {
+                atual->visitado = 0;
+                return combinar(&raiz, atual, resultado);
             }
             atual->visitado = 0;
         }
-        return (achar_dupla(raiz, atual->esquerda, objetivo));
+        return achar_dupla(raiz, atual->direito, objetivo);
     }
+
 }
 
 p_no achar_tripla(p_no raiz, p_no atual, int objetivo){
     if (atual == NULL) return 0;
     p_no resultado;
-    if(resultado = achar_tripla(raiz, atual->direita, objetivo)) {
+    resultado = achar_tripla(raiz, atual->esquerdo, objetivo);
+    if(resultado != NULL) {
         return resultado;
     }
     if(atual->valor < objetivo -2){
+        /*caso o valor atual for objetivo -2 ou maior, seriam necessários dois
+        valores 1 para completar a trinca, dado que valores não podem ser repetir, isso é impossível
+         e essa é a condição de parada */
         atual->visitado = 1;
-        if(resultado = achar_dupla(raiz, raiz, objetivo - atual->valor)){
-            return combinar(raiz, atual, resultado);
+        int valor_atual = atual->valor;
+        resultado = achar_dupla(raiz, raiz, objetivo - atual->valor);
+        if(resultado != NULL){
+            atual->visitado = 0;
+            combinar(&raiz, buscar(raiz, valor_atual), resultado);
+            return raiz;
         }
         atual->visitado = 0;
-        return achar_tripla(raiz, atual->esquerda, objetivo);
+        return achar_tripla(raiz, atual->direito, objetivo);
     }
 }
-p_no combinar(p_no raiz, p_no a, p_no b){
-    char *novo_texto = malloc(strlen(a->texto) + strlen(b->texto) + 1);
-    strcpy(novo_texto, a->texto);
-    strcat(novo_texto, b->texto);
-    p_no novo = adicionar_no(raiz,a->valor + b->valor, novo_texto);
-    remover_rec(raiz, a->valor);
-    remover_rec(raiz, b->valor);
-    destruir_no(a);
-    destruir_no(b);
-    return novo;
-}
-p_no destruirArvore(p_no arvore){
-
-}
-/*O que deve-se fazer:
- * busca binária, verificando soma dos numeros, e soma de algarismos
- * caso um dos dois não corresponda, deve testar proximo recursivamente
- * no final, algoritmo retorna o valor desejado via backtracking, podendo então
- * acessar os nós printando cada sala
- * -> Para mais de uma autoridade, concatenar saidas do encontrar soma, verificando*/
-int main(){
-    int n_cartoes,n_autoridades,i,chave,soma;
-    char texto[4];
-    p_no arvore;
-    p_no arvore_somas;
-    p_no arvore_concatenada;
-    arvore=criarArvore(arvore);
-    arvore_somas=criarArvore(arvore_somas);
-    while(scanf("%i %i",&n_cartoes,&n_autoridades)!=EOF){
-        for(i=0;i<n_cartoes;i++){
-            scanf("%i %s",&chave,texto);
-            inserir(arvore,chave,texto);
+int main() {
+    while(1){
+        p_no arvore = NULL;
+        int cartoes, oficiais;
+        if(scanf("%i %i", &cartoes, &oficiais) == EOF) {
+            break;
         }
-        for(i=0;i<n_autoridades;i++) {
-            scanf(" %i", soma);
-
+        for(int i = 0;i<cartoes;i++){
+            int chave;
+            char ignorar;
+            char *texto = malloc(6);
+            scanf("%i \"%[^\"]s", &chave, texto);
+            arvore = adicionar(arvore, chave, texto);
+            scanf("%c ", &ignorar);
         }
-        /*Após pegar as entradas da mensagem, botar elas na arvore
-         * encontrar soma retorna por backtracking nossa soma desejada
-         * se tiver mais de uma autoridade, concatenar*/
-        if(n_autoridades>1){
-
+        for(int i = 0;i<oficiais;i++){
+            int soma;
+            scanf("%i", &soma);
+            arvore = achar_tripla(arvore, arvore, soma);
         }
-        else{
-
-        }
+        print_arvore(arvore);
+        printf("\n");
+        destruir_arvore(arvore);
     }
-
-
     return 0;
 }
