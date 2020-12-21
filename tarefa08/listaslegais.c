@@ -190,6 +190,16 @@ int descobrir_minimo_remocao(p_no atual, int parcial) {
     }
     return parcial;
 }
+void destruir_arvore(p_no raiz){
+    if(raiz == NULL){
+        return;
+    } else{
+        destruir_arvore(raiz->esquerdo);
+        destruir_arvore(raiz->direito);
+        free(raiz->texto);
+        free(raiz);
+    }
+}
 /*Deve adicionar as operações, e utilizar as funções de implementação*/
 int main() {
     p_no arvore = NULL;
@@ -218,5 +228,6 @@ int main() {
                 break;
         }
     }
+    destruir_arvore(arvore);
     return 0;
 }
