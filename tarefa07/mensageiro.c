@@ -142,8 +142,10 @@ p_no achar_dupla(p_no raiz, p_no atual, int objetivo){
             atual->visitado = 1;
             resultado = buscar(raiz, objetivo - atual->valor);
             if (resultado != NULL && resultado->visitado == 0) {
+                atual = buscar(raiz, valor_atual);
                 atual->visitado = 0;
-                return combinar(&raiz, atual, resultado);
+                combinar(&raiz, atual, resultado);
+                return raiz;
             }
             atual->visitado = 0;
         }
@@ -167,8 +169,9 @@ p_no achar_tripla(p_no raiz, p_no atual, int objetivo){
         int valor_atual = atual->valor;
         resultado = achar_dupla(raiz, raiz, objetivo - atual->valor);
         if(resultado != NULL){
+            atual = buscar(raiz, valor_atual);
             atual->visitado = 0;
-            combinar(&raiz, buscar(raiz, valor_atual), resultado);
+            combinar(&raiz, atual, resultado);
             return raiz;
         }
         atual->visitado = 0;
