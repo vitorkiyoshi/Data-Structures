@@ -75,8 +75,9 @@ p_no remover(p_no raiz, int valor) {
     }
     else{
         if (raiz->esquerdo == NULL && raiz->direito == NULL) {
-            free(raiz->texto);
-            free(&raiz);
+            p_no temp=raiz;
+            free(temp->texto);
+            free(temp);
             raiz = NULL;
         } else if(raiz->esquerdo == NULL) {
             p_no temp = raiz;
