@@ -65,8 +65,6 @@ p_no buscar(p_no raiz, int valor) {
 
 p_no remover(p_no raiz, int valor) {
     if (raiz == NULL) {
-        free(raiz->texto);
-        free(raiz);
         return NULL;
     }
     else if(raiz->valor > valor) {
@@ -77,23 +75,18 @@ p_no remover(p_no raiz, int valor) {
     }
     else{
         if (raiz->esquerdo == NULL && raiz->direito == NULL) {
-            p_no temp=raiz;
-            free(temp->texto);
-            free(temp);
             raiz = NULL;
         } else if(raiz->esquerdo == NULL) {
             p_no temp = raiz;
             raiz = raiz->direito;
             raiz->pai = temp->pai;
-            free(temp->texto);
-            free(temp);
+
         }
         else if(raiz->direito == NULL) {
             p_no temp = raiz;
             raiz = raiz->esquerdo;
             raiz->pai = temp->pai;
-            free(temp->texto);
-            free(temp);
+
         } else{
             p_no min = raiz->esquerdo;
             while (min->direito != NULL) {
@@ -107,7 +100,9 @@ p_no remover(p_no raiz, int valor) {
             raiz->esquerdo = remover(raiz->esquerdo, valor);
         }
     }
-    return raiz;
+    free(raiz->texto);
+    free(raiz);
+    return NULL;
 }
 void print_arvore(p_no raiz){
     if(raiz == NULL) return;
