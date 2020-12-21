@@ -65,6 +65,8 @@ p_no buscar(p_no raiz, int valor) {
 
 p_no remover(p_no raiz, int valor) {
     if (raiz == NULL) {
+        free(raiz->texto);
+        free(raiz);
         return NULL;
     }
     else if(raiz->valor > valor) {
@@ -124,8 +126,13 @@ p_no combinar(p_no *raiz, p_no a, p_no b){
     *raiz = adicionar(*raiz,novo_valor, novo_texto);
     *raiz = remover(*raiz, a->valor);
     *raiz = remover(*raiz, b->valor);
-    p_no novo = buscar(*raiz, novo_valor);
-    return novo;
+    if(*raiz!=NULL) {
+        p_no novo = buscar(*raiz, novo_valor);
+        return novo;
+    }
+    else{
+        return NULL;
+    }
 }
 
 p_no achar_dupla(p_no raiz, p_no atual, int objetivo){
