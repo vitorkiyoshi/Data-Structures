@@ -15,6 +15,7 @@ p_no criar_no(int valor, char *texto) {
     novo->valor = valor;
     novo->texto = texto;
     novo->visitado = 0;
+    return novo;
 }
 
 p_no inserir_no(p_no raiz, p_no novo_no) {
@@ -145,7 +146,7 @@ p_no achar_dupla(p_no raiz, p_no atual, int objetivo){
         }
         return achar_dupla(raiz, atual->direito, objetivo);
     }
-
+    return NULL;
 }
 
 p_no achar_tripla(p_no raiz, p_no atual, int objetivo){
@@ -170,6 +171,7 @@ p_no achar_tripla(p_no raiz, p_no atual, int objetivo){
         atual->visitado = 0;
         return achar_tripla(raiz, atual->direito, objetivo);
     }
+    return NULL;
 }
 int main() {
     while(1){
