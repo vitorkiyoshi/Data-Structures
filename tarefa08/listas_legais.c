@@ -167,3 +167,56 @@ p_no buscar(p_no raiz, long valor) {
     }
     return NULL;
 }
+
+int contar_ocorrencias(p_no raiz, long valor) {
+    p_no no_valor = buscar(raiz, valor);
+    if(no_valor == NULL){
+        return 0;
+    } else {
+        return no_valor->quantidade;
+    }
+}
+
+int descobrir_minimo_remocao(p_no atual, int parcial) {
+    if(atual == NULL){
+        return parcial;
+    }
+    parcial = descobrir_minimo_remocao(atual->esquerdo, parcial);
+    parcial = descobrir_minimo_remocao(atual->direito, parcial);
+    if(atual->valor > atual->quantidade){
+        parcial += atual->quantidade;
+    } else {
+        parcial += atual->quantidade - atual->valor;
+    }
+    return parcial;
+}
+/*Deve adicionar as operações, e utilizar as funções de implementação*/
+int main() {
+    p_no arvore = NULL;
+    int iniciais, operacoes;
+    long adicionar;
+    scanf("%d %d", &iniciais, &operacoes);
+    for(int i=0;i<iniciais;i++){
+        scanf("%ld", &adicionar);
+        arvore = inserir(arvore, adicionar);
+    }
+    for(int i=0;i<operacoes;i++) {
+        int operacao;
+        scanf("%i", &operacao);
+        long contar;
+        switch(operacao){
+            case 1:
+                scanf("%ld", &adicionar);
+                arvore = inserir(arvore, adicionar);
+                break;
+            case 2:
+                scanf("%ld", &contar);
+                printf("%i\n", contar_ocorrencias(arvore, contar));
+                break;
+            case 3:
+                printf("%i\n", descobrir_minimo_remocao(arvore, 0));
+                break;
+        }
+    }
+    return 0;
+}
