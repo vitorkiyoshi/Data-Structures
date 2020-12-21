@@ -196,7 +196,6 @@ void destruir_arvore(p_no raiz){
     } else{
         destruir_arvore(raiz->esquerdo);
         destruir_arvore(raiz->direito);
-        free(raiz->texto);
         free(raiz);
     }
 }
