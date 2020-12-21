@@ -75,6 +75,8 @@ p_no remover(p_no raiz, int valor) {
     }
     else{
         if (raiz->esquerdo == NULL && raiz->direito == NULL) {
+            free(raiz->texto);
+            free(&raiz);
             raiz = NULL;
         } else if(raiz->esquerdo == NULL) {
             p_no temp = raiz;
@@ -181,7 +183,7 @@ int main() {
         for(int i = 0;i<cartoes;i++){
             int chave;
             char ignorar;
-            char *texto = malloc(6);
+            char *texto = malloc(6*sizeof(char));
             scanf("%i \"%[^\"]s", &chave, texto);
             arvore = adicionar(arvore, chave, texto);
             scanf("%c ", &ignorar);
