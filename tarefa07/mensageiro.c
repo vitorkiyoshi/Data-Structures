@@ -65,6 +65,8 @@ p_no buscar(p_no raiz, int valor) {
 
 p_no remover(p_no raiz, int valor) {
     if (raiz == NULL) {
+        free(raiz->texto);
+        free(raiz);
         return NULL;
     }
     else if(raiz->valor > valor) {
@@ -75,18 +77,23 @@ p_no remover(p_no raiz, int valor) {
     }
     else{
         if (raiz->esquerdo == NULL && raiz->direito == NULL) {
+            p_no temp=raiz;
+            free(temp->texto);
+            free(temp);
             raiz = NULL;
         } else if(raiz->esquerdo == NULL) {
             p_no temp = raiz;
             raiz = raiz->direito;
             raiz->pai = temp->pai;
-
+            free(temp->texto);
+            free(temp);
         }
         else if(raiz->direito == NULL) {
             p_no temp = raiz;
             raiz = raiz->esquerdo;
             raiz->pai = temp->pai;
-
+            free(temp->texto);
+            free(temp);
         } else{
             p_no min = raiz->esquerdo;
             while (min->direito != NULL) {
@@ -100,9 +107,7 @@ p_no remover(p_no raiz, int valor) {
             raiz->esquerdo = remover(raiz->esquerdo, valor);
         }
     }
-    free(raiz->texto);
-    free(raiz);
-    return NULL;
+    return raiz;
 }
 void print_arvore(p_no raiz){
     if(raiz == NULL) return;
@@ -112,7 +117,7 @@ void print_arvore(p_no raiz){
 }
 p_no combinar(p_no *raiz, p_no a, p_no b){
     /*combinar toma um ponteiro, já que pode alterar a raiz da árvore, mas
-    não pode retornar a nova raiz, já que precisa retornar o novo nó criado,
+    não pode retornar a nova raiz, precisa retornar o novo nó criado,
      para que a combinação possa ser finalizada.*/
     char *novo_texto = malloc(strlen(a->texto) + strlen(b->texto) + 1);
     strcpy(novo_texto, a->texto);
@@ -121,13 +126,8 @@ p_no combinar(p_no *raiz, p_no a, p_no b){
     *raiz = adicionar(*raiz,novo_valor, novo_texto);
     *raiz = remover(*raiz, a->valor);
     *raiz = remover(*raiz, b->valor);
-    if(*raiz!=NULL) {
-        p_no novo = buscar(*raiz, novo_valor);
-        return novo;
-    }
-    else{
-        return NULL;
-    }
+    p_no novo = buscar(*raiz, novo_valor);
+    return novo;
 }
 
 p_no achar_dupla(p_no raiz, p_no atual, int objetivo){
