@@ -10,146 +10,66 @@ p_no criar_no(long valor){
     novo->cor = VERMELHA;
     return novo;
 }
-//buscas para arvore
-p_no achar_pai(p_no filho){
-    if(filho == NULL) {
-        return NULL;
-    } else {
-        return filho->pai;
-    }
+
+p_no rotacionar_esquerda(p_no no){
+    p_no x=no->direito;
+    no->direito=x->esquerdo;
+    x->esquerdo=no;
+    x->cor=no->cor;
+    no->cor=VERMELHA;
+    return x;
 }
 
-p_no achar_avo(p_no neto){
-    return achar_pai(achar_pai(neto));
+p_no rotacionar_direita(p_no no){
+    p_no x=no->esquerdo;
+    no->esquerdo=x->direito;
+    x->direito=no;
+    x->cor=no->cor;
+    no->cor=VERMELHA;
+    return x;
+}
+int ehVermelho(p_no x){
+    if(x==NULL){
+        return 0;
+    }
+    return x->cor==VERMELHA;
+}
+int ehPreto(p_no x){
+    if(x==NULL){
+        return 1;
+    }
+    return x->cor==PRETA;
 }
 
-p_no achar_irmao(p_no irmao){
-    p_no pai = achar_pai(irmao);
-    if (pai == NULL) {
-        return NULL;
-    } else {
-        if(irmao == pai->esquerdo){
-            return pai->direito;
-        } else {
-            return pai->esquerdo;
-        }
-    }
-}
-
-p_no achar_tio(p_no sobrinho){
-    return achar_irmao(achar_pai(sobrinho));
-}
-void rotacionar_direita(p_no no){
-    p_no filho_esquerdo = no->esquerdo;
-    p_no p = achar_pai(no);
-    no->esquerdo = filho_esquerdo->direito;
-    filho_esquerdo->direito = no;
-    no->pai = filho_esquerdo;
-    if (no->esquerdo != NULL) {
-        no->esquerdo->pai = no;
-    }
-    if (p != NULL) {
-        if (no == p->direito) {
-            p->direito = filho_esquerdo;
-        } else {
-            p->esquerdo = filho_esquerdo;
-        }
-    }
-    filho_esquerdo->pai = p;
-}
-
-void rotacionar_esquerda(p_no no){
-    p_no filho_direito = no->direito;
-    p_no pai = achar_pai(no);
-    no->direito = filho_direito->esquerdo;
-    filho_direito->esquerdo = no;
-    no->pai = filho_direito;
-    if (no->direito != NULL) {
-        no->direito->pai = no;
-    }
-    if (pai != NULL) {
-        if (no == pai->direito) {
-            pai->direito = filho_direito;
-        } else {
-            pai->esquerdo = filho_direito;
-        }
-    }
-    filho_direito->pai = pai;
-}
-
-p_no inserir_simples(p_no raiz, p_no novo_no){
-    if (raiz == NULL){
-        return novo_no;
-    }
-    p_no atual = raiz;
-    while(atual != NULL){
-        if (atual->valor > novo_no->valor){
-            if(atual->esquerdo == NULL) {
-                atual->esquerdo = novo_no;
-                break;
-            } else {
-                atual = atual->esquerdo;
-            }
-        } else if (atual->valor < novo_no->valor) {
-            if(atual->direito == NULL) {
-                atual->direito = novo_no;
-                break;
-            } else {
-                atual = atual->direito;
-            }
-        } else {
-            atual->quantidade += 1;
-            free(novo_no);
-            return NULL;
-        }
-    }
-    novo_no->pai = atual;
-    return novo_no;
-}
-
-void consertar_arvore(p_no novo) {
-    p_no pai = achar_pai(novo);
-    p_no tio = achar_tio(novo);
-    p_no avo = achar_avo(novo);
-    if(pai == NULL){
-        novo->cor = PRETA;
-    } else if (pai->cor == VERMELHA) {
-        if(tio != NULL && tio->cor == VERMELHA){
-            pai->cor = PRETA;
-            tio->cor = PRETA;
-            avo->cor = PRETA;
-            consertar_arvore(avo);
-        } else {
-            if (novo == pai->direito && pai == avo->esquerdo) {
-                rotacionar_esquerda(pai);
-                novo = novo->esquerdo;
-            } else if (novo == pai->esquerdo && pai == avo->direito) {
-                rotacionar_direita(pai);
-                novo = novo->direito;
-
-            }
-            pai = achar_pai(novo);
-            avo = achar_avo(novo);
-            if (novo == pai->direito) {
-                rotacionar_esquerda(avo);
-            } else {
-                rotacionar_direita(avo);
-            }
-            pai->cor = PRETA;
-            avo->cor = VERMELHA;
-        }
-    }
+void sobeVermelho(p_no raiz){
+    raiz->cor= VERMELHA;
+    raiz->esquerdo->cor= PRETA;
+    raiz->direito->cor= PRETA;
 }
 
 p_no inserir(p_no raiz, long valor_novo) {
-    p_no novo = criar_no(valor_novo);
-    p_no nova_raiz = inserir_simples(raiz, novo);
-    if (nova_raiz != NULL){
-        raiz = nova_raiz;
-        consertar_arvore(novo);
-        while(raiz->pai != NULL){
-            raiz = raiz->pai;
-        }
+    p_no novo;
+    if(raiz==NULL){
+        novo=criar_no(valor_novo);
+        return novo;
+    }
+    if(valor_novo<raiz->valor){
+        raiz->esquerdo=inserir(raiz->esquerdo,valor_novo);
+    }
+    else if(valor_novo>raiz->valor){
+        raiz->direito=inserir(raiz->direito,valor_novo);
+    } else {
+        raiz->quantidade += 1;
+        return raiz;
+    }
+    if(ehVermelho(raiz->direito)&& ehPreto(raiz->esquerdo)){
+        raiz = rotacionar_esquerda(raiz);
+    }
+    if(ehVermelho(raiz->esquerdo) && ehVermelho(raiz->esquerdo->esquerdo)){
+        raiz = rotacionar_direita(raiz);
+    }
+    if(ehVermelho(raiz->esquerdo) && ehVermelho(raiz->direito)){
+        sobeVermelho(raiz);
     }
     return raiz;
 }
