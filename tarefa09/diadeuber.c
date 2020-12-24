@@ -80,25 +80,20 @@ int calcularDistancia(int x1,int x2,int y1, int y2){
         y=y1-y2;
     }
     return x+y;
-}
-int addDistancia(int kilometragem, int distancia){
-    if(kilometragem==0){
 
-    }
-    else{
-        kilometragem+=
-    }
 }
+
 int main(){
     char operacao;//variaveis utilizadas para entrada
     char nome[15];
     double avaliacao;
-    int *numero_clientes,x1,x2,y1,y2;
+    int *numero_clientes,x1,x2,y1,y2,qtde_cancelamentos;
     numero_clientes=malloc(sizeof(int));
     p_cliente clientes[MAX];
     *numero_clientes=0;
     //variaveis para calculo efetivo de dist, renda
-    int kilometragem,posX,posY;
+    int pos_inicial=0;//posicao inicial do vetor
+    int kilometragem=0,posX,posY;
     double renda_bruta;
     double despesas;
     double renda_liquida;
@@ -107,19 +102,36 @@ int main(){
         switch(operacao){
             case 'A':
                 add_elemento(clientes,numero_clientes);
-                printf("Cliente %s foi adicionado(a)",clientes[*numero_clientes-1]->nome);
+                printf("Cliente %s foi adicionado(a)\n",clientes[*numero_clientes-1]->nome);
             case 'C':
                 scanf("%s",nome);
                 remover_elemento(clientes,numero_clientes,nome);
-                printf("%s cancelou a corrida");
+                printf("%s cancelou a corrida\n");
+                qtde_cancelamentos+=1;
             case 'F':
                 heapsort(clientes,*numero_clientes);
-                //adicionar distancia da origem do carro até ponto inicial do cliente
+                if(kilometragem==0){
+                    kilometragem+=calcularDistancia(0,clientes[pos_inicial]->x1,0,clientes[pos_inicial]->y1); //chegando até o cliente
+                }
+                else{
+                    kilometragem+=calcularDistancia(posX,clientes[pos_inicial]->x1,posY,clientes[pos_inicial]->y1);//chegando até o cliente
+                }
                 //adicionar kilometragem até destino
+                kilometragem+=calcularDistancia(clientes[pos_inicial]->x1,clientes[pos_inicial]->x2,clientes[pos_inicial]->y1,clientes[pos_inicial]->y2);
                 //setar carro na posição final
-                /*Para o preço*/
-
+                posX=clientes[pos_inicial]->x2;
+                posY=clientes[pos_inicial]->y2;
+                /*Para o preço, calcular */
+                printf("A corrida de %s foi finalizada\n",clientes[pos_inicial]->nome);
+                pos_inicial+=1;
         }
     }
+    renda_bruta=1.4*kilometragem;
+    despesas= 57+((kilometragem/10)*4.104)+(renda_bruta/4)+(qtde_cancelamentos*7);
+    renda_liquida=renda_bruta-despesas;
     printf("Jornada finalizada. Aqui esta o seu rendimento de hoje\n");
+    printf("Km total: %i\n",kilometragem);
+    printf("Rendimento bruto: %.2lf\n",renda_bruta);
+    printf("Despesas: %.2lf\n",despesas);
+    printf("Rendimento liquido: %.2lf\n",renda_liquida);
 }
