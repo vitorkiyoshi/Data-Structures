@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <heap.h>
+#include "heap.h"
+#include <string.h>
 #define MAX 500
 //definindo utilização de vetores
 int F_DIR(int n){//relatar posição dos vizinhos
@@ -18,7 +19,7 @@ void desce_no_heap(p_cliente *heap, int n, int k){
     int maior_filho;
     if(F_ESQ(k)<n){
         maior_filho=F_ESQ(k);
-        if(F_DIR(K)<n && heap[F_ESQ(k)]->av < heap[F_DIR(k)]->av){
+        if(F_DIR(k)<n && heap[F_ESQ(k)]->av < heap[F_DIR(k)]->av){
             maior_filho=F_DIR(k);
         }
         if(heap[k]->av<heap[maior_filho]->av){
@@ -33,7 +34,7 @@ void heapsort(p_cliente *heap, int n){
         desce_no_heap(heap,n,k);
     }
     while(n>1){
-        troca(heap[0],heap(n-1));
+        troca(0,n-1,heap);
         n--;
         desce_no_heap(heap,n,0);
     }
@@ -45,7 +46,7 @@ void add_elemento(p_cliente *heap,int *numero_clientes){//adicionando elemento h
     scanf("%s %lf %i %i %i %i",nome, &avaliacao, &x1, &y1, &x2, &y2);
     *numero_clientes+=1;
     heap[*numero_clientes-1]->av=avaliacao;
-    heap[*numero_clientes-1]->nome=nome;
+    strcpy(nome,heap[*numero_clientes]->nome);
     heap[*numero_clientes-1]->x1=x1;
     heap[*numero_clientes-1]->x2=x2;
     heap[*numero_clientes-1]->y1=y1;
@@ -53,19 +54,19 @@ void add_elemento(p_cliente *heap,int *numero_clientes){//adicionando elemento h
 }
 void remover_elemento(p_cliente *heap, int *n, char name[]){//remover elemento do vetor heap
     int m=1;
-    p_cliente temp;
-    i=0;
+    int i=0;
     while(m){
-        if(heap[i]->nome==nome){
+        if(strcmp(heap[i]->nome,name)==0){
             m=0;
             for(int j=i;j<*n-1;j++){
                 heap[j]=heap[j+1];
             }
             *n-=1;
         }
+        i+=1;
     }
 }
-int calcularDistancia(int x1,int x2,int y1, int y2){
+int calcularDistancia(int x1,int x2,int y1, int y2){//distancia de manhattan de um ponto para outro
     int x,y;
     if(x1-x2<0){
         x=-(x1-x2);
@@ -84,10 +85,9 @@ int calcularDistancia(int x1,int x2,int y1, int y2){
 }
 
 int main(){
-    char operacao;//variaveis utilizadas para entrada
+    char operacao=' ';//variaveis utilizadas para entrada
     char nome[15];
-    double avaliacao;
-    int *numero_clientes,x1,x2,y1,y2,qtde_cancelamentos;
+    int *numero_clientes,qtde_cancelamentos=0;
     numero_clientes=malloc(sizeof(int));
     p_cliente clientes[MAX];
     *numero_clientes=0;
@@ -106,7 +106,7 @@ int main(){
             case 'C':
                 scanf("%s",nome);
                 remover_elemento(clientes,numero_clientes,nome);
-                printf("%s cancelou a corrida\n");
+                printf("%s cancelou a corrida\n",nome);
                 qtde_cancelamentos+=1;
             case 'F':
                 heapsort(clientes,*numero_clientes);
@@ -134,4 +134,5 @@ int main(){
     printf("Rendimento bruto: %.2lf\n",renda_bruta);
     printf("Despesas: %.2lf\n",despesas);
     printf("Rendimento liquido: %.2lf\n",renda_liquida);
+    free(numero_clientes);
 }
