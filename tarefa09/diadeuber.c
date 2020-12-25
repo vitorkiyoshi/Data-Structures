@@ -87,7 +87,7 @@ int calcDistancia(int x1,int x2,int y1, int y2){//distancia de manhattan
     }
     return x+y;
 }
-/*void printarlista(p_cliente *heap, int n){
+/*void printarlista(p_cliente *heap, int n){//Função de debug
     for (int i=0;i<n;i++){
         printf("%s\n",heap[i]->nome);
     }
@@ -133,7 +133,7 @@ int main(){
             proximo_cliente = clientes[*n_clientes - 1];
         }
 
-    }
+    }//Calculo Final da renda UBER
     kilometragem=kilometragem_rentavel+distancia;
     renda_bruta=7*n_cancelamentos + 1.4*kilometragem_rentavel;
     despesas=57 + ((kilometragem/10)*4.104);
