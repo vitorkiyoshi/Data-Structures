@@ -33,6 +33,7 @@ void heapsort(p_cliente *heap,int n){//iterativo de construirheap
 }
 void add_elemento(p_cliente *heap,int *numero_clientes){//adicionando elemento heap
     char nome[15];
+    p_cliente temp;
     double avaliacao;
     int x1,y1,x2,y2;
     heap[*numero_clientes]=malloc(sizeof(Cliente));
@@ -44,6 +45,17 @@ void add_elemento(p_cliente *heap,int *numero_clientes){//adicionando elemento h
     heap[*numero_clientes]->y1=y1;
     heap[*numero_clientes]->y2=y2;
     *numero_clientes+=1;
+    if(*numero_clientes>1){//deve-se colocar a pessoa em ultimo
+        for(int i=0;i<*numero_clientes;i++){
+            temp=heap[i];
+            heap[i]=heap[*numero_clientes-1];
+            heap[*numero_clientes-1]=temp;
+        }
+        printf("Cliente %s foi adicionado(a)\n",heap[0]->nome);
+    }
+    else {
+        printf("Cliente %s foi adicionado(a)\n", heap[*numero_clientes - 1]->nome);
+    }
 }
 void remover_elemento(p_cliente *heap,int *numero_clientes,char nome[15]){//desaloca posição do vetor para depois ser realocado
     int pos=0;
@@ -75,6 +87,11 @@ int calcDistancia(int x1,int x2,int y1, int y2){//distancia de manhattan
     }
     return x+y;
 }
+/*void printarlista(p_cliente *heap, int n){
+    for (int i=0;i<n;i++){
+        printf("%s\n",heap[i]->nome);
+    }
+}*/
 int main(){
     char operacao='x';
     p_cliente clientes[500],proximo_cliente;
@@ -91,7 +108,6 @@ int main(){
         switch(operacao){
             case 'A':
                 add_elemento(clientes,n_clientes);
-                printf("Cliente %s foi adicionado(a)\n",clientes[*n_clientes-1]->nome);
                 break;
             case 'C':
                 scanf("%s",nome);
@@ -100,12 +116,8 @@ int main(){
                 n_cancelamentos+=1;
                 break;
             case 'F':
-                if(proximo_cliente==NULL){
-                    heapsort(clientes,*n_clientes);
-                    proximo_cliente=clientes[*n_clientes-1];
-                }
                 distancia+=calcDistancia(posX,proximo_cliente->x1,posY,proximo_cliente->y1);
-                //calcular distancia até destino como rentavel
+                //calcular distancia até destino como rentave
                 kilometragem_rentavel+=calcDistancia(proximo_cliente->x1,proximo_cliente->x2,proximo_cliente->y1,proximo_cliente->y2);
                 //setar posFinal
                 posX=proximo_cliente->x2;
@@ -113,10 +125,12 @@ int main(){
                 printf("A corrida de %s foi finalizada\n",proximo_cliente->nome);
                 remover_elemento(clientes,n_clientes,proximo_cliente->nome);
                 proximo_cliente=NULL;
+                heapsort(clientes, *n_clientes);
+                proximo_cliente = clientes[*n_clientes - 1];
                 break;
         }
-        if(*n_clientes-1==0){
-            proximo_cliente=clientes[*n_clientes-1];
+        if(*n_clientes-1==0) {
+            proximo_cliente = clientes[*n_clientes - 1];
         }
 
     }
