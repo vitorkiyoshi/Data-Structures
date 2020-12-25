@@ -110,7 +110,7 @@ int main(){
                 //setar posFinal
                 posX=proximo_cliente->x2;
                 posY=proximo_cliente->y2;
-                printf("A corrida de %s finalizada\n",proximo_cliente->nome);
+                printf("A corrida de %s foi finalizada\n",proximo_cliente->nome);
                 remover_elemento(clientes,n_clientes,proximo_cliente->nome);
                 proximo_cliente=NULL;
                 break;
