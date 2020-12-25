@@ -133,7 +133,7 @@ int main(){
             proximo_cliente = clientes[*n_clientes - 1];
         }
 
-    }//Calculo Final da renda UBER
+    }//Calculo Final da renda
     kilometragem=kilometragem_rentavel+distancia;
     renda_bruta=7*n_cancelamentos + 1.4*kilometragem_rentavel;
     despesas=57 + ((kilometragem/10)*4.104);
