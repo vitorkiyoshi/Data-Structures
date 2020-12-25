@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include "heap.h"
 #include <string.h>
-#define MAX 500
-//definindo utilização de vetores
 int F_DIR(int n){//relatar posição dos vizinhos
     return 2*n;
 }
@@ -15,7 +13,7 @@ void troca(int n1, int n2, p_cliente *heap){
     heap[n1]=heap[n2];
     heap[n2]=temp;
 }
-void desce_no_heap(p_cliente *heap, int n, int k){
+void desce_no_heap(p_cliente *heap, int n, int k){//função heap para vetores
     int maior_filho;
     if(F_ESQ(k)<n){
         maior_filho=F_ESQ(k);
@@ -43,96 +41,100 @@ void add_elemento(p_cliente *heap,int *numero_clientes){//adicionando elemento h
     char nome[15];
     double avaliacao;
     int x1,y1,x2,y2;
+    heap[*numero_clientes]=malloc(sizeof(Cliente));
     scanf("%s %lf %i %i %i %i",nome, &avaliacao, &x1, &y1, &x2, &y2);
+    heap[*numero_clientes]->av=avaliacao;
+    strcpy(heap[*numero_clientes]->nome,nome);
+    heap[*numero_clientes]->x1=x1;
+    heap[*numero_clientes]->x2=x2;
+    heap[*numero_clientes]->y1=y1;
+    heap[*numero_clientes]->y2=y2;
     *numero_clientes+=1;
-    heap[*numero_clientes-1]->av=avaliacao;
-    strcpy(nome,heap[*numero_clientes]->nome);
-    heap[*numero_clientes-1]->x1=x1;
-    heap[*numero_clientes-1]->x2=x2;
-    heap[*numero_clientes-1]->y1=y1;
-    heap[*numero_clientes-1]->y2=y2;
 }
-void remover_elemento(p_cliente *heap, int *n, char name[]){//remover elemento do vetor heap
-    int m=1;
-    int i=0;
-    while(m){
-        if(strcmp(heap[i]->nome,name)==0){
-            m=0;
-            for(int j=i;j<*n-1;j++){
-                heap[j]=heap[j+1];
-            }
-            *n-=1;
+void remover_elemento(p_cliente *heap,int *numero_clientes,char nome[15]){//desaloca posição do vetor para depois ser realocado
+    int pos=0;
+    p_cliente temp;
+    while(1){
+        if(strcmp(heap[pos]->nome,nome)==0){
+            temp = heap[*numero_clientes-1];
+            heap[*numero_clientes-1] = heap[pos];
+            heap[pos] = temp;
+            free(heap[*numero_clientes-1]);
+            *numero_clientes-=1;
+            break;
         }
-        i+=1;
+        pos+=1;
     }
 }
-int calcularDistancia(int x1,int x2,int y1, int y2){//distancia de manhattan de um ponto para outro
-    int x,y;
-    if(x1-x2<0){
-        x=-(x1-x2);
+void remover_ultimo_elemento(p_cliente *heap,int *numero_clientes){
+    free(heap[*numero_clientes-1]);
+    *numero_clientes-=1;
+}
+int calcDistancia(int x1,int x2,int y1, int y2){//distancia de manhattan
+    int x= x1-x2;
+    int y= y1-y2;
+    if(x<0){
+        x=x*(-1);
     }
-    else{
-        x=x1-x2;
-    }
-    if(y1-y2<0){
-        y=-(y1-y2);
-    }
-    else{
-        y=y1-y2;
+    if(y<0){
+        y=y*(-1);
     }
     return x+y;
-
 }
-
 int main(){
-    char operacao=' ';//variaveis utilizadas para entrada
-    char nome[15];
-    int *numero_clientes,qtde_cancelamentos=0;
-    numero_clientes=malloc(sizeof(int));
-    p_cliente clientes[MAX];
-    *numero_clientes=0;
-    //variaveis para calculo efetivo de dist, renda
-    int pos_inicial=0;//posicao inicial do vetor
-    int kilometragem=0,posX,posY;
-    double renda_bruta;
-    double despesas;
-    double renda_liquida;
-    while(operacao!='T'){
-        scanf("%c", &operacao);
+    char operacao='x';
+    p_cliente clientes[500],proximo_cliente;
+    int *n_clientes=malloc(sizeof(int));
+    *n_clientes=0;//inicia com 0
+    char nome[15];//remoção a partir de um nome
+    //variaveis para avaliar kilometragem
+    int kilometragem=0,distancia=0,kilometragem_rentavel=0;
+    int n_cancelamentos=0;
+    double renda_bruta,renda_liquida,despesas;
+    int posX=0,posY=0;//posicao do carro no trajeto
+    while (operacao!='T'){
+        scanf("%c",&operacao);
         switch(operacao){
             case 'A':
-                add_elemento(clientes,numero_clientes);
-                printf("Cliente %s foi adicionado(a)\n",clientes[*numero_clientes-1]->nome);
+                add_elemento(clientes,n_clientes);
+                printf("Cliente %s adicionado\n",clientes[*n_clientes-1]->nome);
+                break;
             case 'C':
                 scanf("%s",nome);
-                remover_elemento(clientes,numero_clientes,nome);
-                printf("%s cancelou a corrida\n",nome);
-                qtde_cancelamentos+=1;
+                remover_elemento(clientes,n_clientes,nome);
+                printf("Cliente %s removido\n",nome);
+                n_cancelamentos+=1;
+                break;
             case 'F':
-                heapsort(clientes,*numero_clientes);
-                if(kilometragem==0){
-                    kilometragem+=calcularDistancia(0,clientes[pos_inicial]->x1,0,clientes[pos_inicial]->y1); //chegando até o cliente
+                if(!proximo_cliente){
+                    heapsort(clientes,*n_clientes);
+                    proximo_cliente=clientes[*n_clientes-1];
                 }
-                else{
-                    kilometragem+=calcularDistancia(posX,clientes[pos_inicial]->x1,posY,clientes[pos_inicial]->y1);//chegando até o cliente
-                }
-                //adicionar kilometragem até destino
-                kilometragem+=calcularDistancia(clientes[pos_inicial]->x1,clientes[pos_inicial]->x2,clientes[pos_inicial]->y1,clientes[pos_inicial]->y2);
-                //setar carro na posição final
-                posX=clientes[pos_inicial]->x2;
-                posY=clientes[pos_inicial]->y2;
-                /*Para o preço, calcular */
-                printf("A corrida de %s foi finalizada\n",clientes[pos_inicial]->nome);
-                pos_inicial+=1;
+                distancia+=calcDistancia(posX,proximo_cliente->x1,posY,proximo_cliente->y1);
+                //calcular distancia até destino como rentavel
+                kilometragem_rentavel+=calcDistancia(proximo_cliente->x1,proximo_cliente->x2,proximo_cliente->y1,proximo_cliente->y2);
+                //setar posFinal
+                posX=proximo_cliente->x2;
+                posY=proximo_cliente->y2;
+                printf("Corrida de %s finalizada\n",proximo_cliente->nome);
+                remover_elemento(clientes,n_clientes,proximo_cliente->nome);
+                proximo_cliente=NULL;
+                break;
         }
+        if(*n_clientes-1==0){
+            proximo_cliente=clientes[*n_clientes-1];
+        }
+
     }
-    renda_bruta=1.4*kilometragem;
-    despesas= 57+((kilometragem/10)*4.104)+(renda_bruta/4)+(qtde_cancelamentos*7);
-    renda_liquida=renda_bruta-despesas;
-    printf("Jornada finalizada. Aqui esta o seu rendimento de hoje\n");
-    printf("Km total: %i\n",kilometragem);
-    printf("Rendimento bruto: %.2lf\n",renda_bruta);
-    printf("Despesas: %.2lf\n",despesas);
-    printf("Rendimento liquido: %.2lf\n",renda_liquida);
-    free(numero_clientes);
+    kilometragem=kilometragem_rentavel+distancia;
+    renda_bruta=7*n_cancelamentos + 1.4*kilometragem_rentavel;
+    despesas=57 + (kilometragem/10)*4.104;
+    renda_liquida=renda_bruta-despesas-(renda_bruta*0.25);
+    printf("Ganhos do dia\n");
+    printf("Kilometragem: %i\n",kilometragem);
+    printf("renda bruta: %.2lf\n",renda_bruta);
+    printf("despesas: %.2lf\n",despesas);
+    printf("renda liquida: %.2lf\n",renda_liquida);
+    free(n_clientes);
+    return 0;
 }
