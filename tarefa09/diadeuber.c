@@ -2,39 +2,33 @@
 #include <stdlib.h>
 #include "heap.h"
 #include <string.h>
-int F_DIR(int n){//relatar posição dos vizinhos
-    return 2*n;
-}
-int F_ESQ(int n){
-    return 2*n+1;
-}
 void troca(int n1, int n2, p_cliente *heap){
     p_cliente temp=heap[n1];
     heap[n1]=heap[n2];
     heap[n2]=temp;
 }
-void desce_no_heap(p_cliente *heap, int n, int k){//função heap para vetores
-    int maior_filho;
-    if(F_ESQ(k)<n){
-        maior_filho=F_ESQ(k);
-        if(F_DIR(k)<n && heap[F_ESQ(k)]->av < heap[F_DIR(k)]->av){
-            maior_filho=F_DIR(k);
-        }
-        if(heap[k]->av<heap[maior_filho]->av){
-            troca(k,maior_filho,heap);
-            desce_no_heap(heap, n, maior_filho);
-        }
+void construirHeap(p_cliente *heap,int n, int index){//construindo heap recursivamente
+    int maior= index;
+    int esq=2*index+1;
+    int dir=2*index+2;
+    if(esq<n && heap[esq]->av > heap[maior]->av){
+        maior=esq;
+    }
+    if(dir<n && heap[dir]->av > heap[maior]->av){
+        maior=dir;
+    }
+    if(maior!=index){
+        troca(index,maior,heap);
+        construirHeap(heap,n,maior);
     }
 }
-void heapsort(p_cliente *heap, int n){
-    int k;
-    for(k=n/2; k>=0; k--){
-        desce_no_heap(heap,n,k);
+void heapsort(p_cliente *heap,int n){//iterativo de construirheap
+    for(int i=n/2-1;i>=0;i--){
+        construirHeap(heap,n,i);
     }
-    while(n>1){
-        troca(0,n-1,heap);
-        n--;
-        desce_no_heap(heap,n,0);
+    for(int i=n-1;i>0;i--){
+        troca(0,i,heap);
+        construirHeap(heap,i,0);
     }
 }
 void add_elemento(p_cliente *heap,int *numero_clientes){//adicionando elemento heap
@@ -66,10 +60,10 @@ void remover_elemento(p_cliente *heap,int *numero_clientes,char nome[15]){//desa
         pos+=1;
     }
 }
-void remover_ultimo_elemento(p_cliente *heap,int *numero_clientes){
+/*void remover_ultimo_elemento(p_cliente *heap,int *numero_clientes){
     free(heap[*numero_clientes-1]);
     *numero_clientes-=1;
-}
+}*/
 int calcDistancia(int x1,int x2,int y1, int y2){//distancia de manhattan
     int x= x1-x2;
     int y= y1-y2;
@@ -88,7 +82,7 @@ int main(){
     *n_clientes=0;//inicia com 0
     char nome[15];//remoção a partir de um nome
     //variaveis para avaliar kilometragem
-    int kilometragem=0,distancia=0,kilometragem_rentavel=0;
+    double kilometragem=0,distancia=0,kilometragem_rentavel=0;
     int n_cancelamentos=0;
     double renda_bruta,renda_liquida,despesas;
     int posX=0,posY=0;//posicao do carro no trajeto
@@ -97,16 +91,16 @@ int main(){
         switch(operacao){
             case 'A':
                 add_elemento(clientes,n_clientes);
-                printf("Cliente %s adicionado\n",clientes[*n_clientes-1]->nome);
+                printf("Cliente %s foi adicionado(a)\n",clientes[*n_clientes-1]->nome);
                 break;
             case 'C':
                 scanf("%s",nome);
                 remover_elemento(clientes,n_clientes,nome);
-                printf("Cliente %s removido\n",nome);
+                printf("%s cancelou a corrida\n",nome);
                 n_cancelamentos+=1;
                 break;
             case 'F':
-                if(!proximo_cliente){
+                if(proximo_cliente==NULL){
                     heapsort(clientes,*n_clientes);
                     proximo_cliente=clientes[*n_clientes-1];
                 }
@@ -116,7 +110,7 @@ int main(){
                 //setar posFinal
                 posX=proximo_cliente->x2;
                 posY=proximo_cliente->y2;
-                printf("Corrida de %s finalizada\n",proximo_cliente->nome);
+                printf("A corrida de %s finalizada\n",proximo_cliente->nome);
                 remover_elemento(clientes,n_clientes,proximo_cliente->nome);
                 proximo_cliente=NULL;
                 break;
@@ -128,13 +122,13 @@ int main(){
     }
     kilometragem=kilometragem_rentavel+distancia;
     renda_bruta=7*n_cancelamentos + 1.4*kilometragem_rentavel;
-    despesas=57 + (kilometragem/10)*4.104;
+    despesas=57 + ((kilometragem/10)*4.104);
     renda_liquida=renda_bruta-despesas-(renda_bruta*0.25);
-    printf("Ganhos do dia\n");
-    printf("Kilometragem: %i\n",kilometragem);
-    printf("renda bruta: %.2lf\n",renda_bruta);
-    printf("despesas: %.2lf\n",despesas);
-    printf("renda liquida: %.2lf\n",renda_liquida);
+    printf("\nJornada finalizada. Aqui esta o seu rendimento de hoje\n");
+    printf("Km total: %.0lf\n",kilometragem);
+    printf("Rendimento bruto: %.2lf\n",renda_bruta);
+    printf("Despesas: %.2lf\n",despesas);
+    printf("Rendimento liquido: %.2lf\n",renda_liquida);
     free(n_clientes);
     return 0;
 }
