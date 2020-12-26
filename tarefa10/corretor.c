@@ -39,8 +39,73 @@ void adicionar(char *palavra, p_no *hash_list, int tamanho){
 }
 //checa possíveis erros com a lista de palavras, verificando tamanho e após os caracteres
 Classificacao checar_palavra(char *p1, char *p2){//checagem preliminar
+    int tamanho_a = strlen(p1);
+    int tamanho_b = strlen(p2);
+    int limite = tamanho_a>tamanho_b?tamanho_a:tamanho_b;
+    int diff = tamanho_a-tamanho_b;
+    int erro = 0;
+    if (diff>1 || diff<-1){
+        return VERMELHO;
+    }
+    for(int i=0;i<limite;i++){
+        char a = i<tamanho_a?p1[i]:'\0';
+        char b = i<tamanho_b?p2[i]:'\0';
+        if(a != b){
+            if(i+1<limite && (diff == -1 || diff == 1) && !erro){//verificação de limites de caracteres
+                erro = 1;
+                if (diff == -1 && a == p2[i+1]) {
+                    p2++;
+                    continue;
+                } else if (diff == 1 && b == p1[i+1]){
+                    p1++;
+                    continue;
+                }
+            }
+            if(erro) {
+                return VERMELHO;
+            } else {
+                erro = 1;
+            }
+        }
+    }
+    if(erro){
+        return AMARELO;
+    } else {
+        return VERDE;
+    }
 }
-Classificacao checar_dicionario(char* palavra, p_no *hash_list, int tamanho){
+Classificacao checar_dicionario(char* palavra, p_no *hash_list, int tamanho){//checagem de caracteres em relação a palavra original
+    int hash = encontrar_hash(palavra, tamanho);//*checar de conflito
+    p_no palavra_atual = hash_list[hash];
+    Classificacao estado = VERMELHO;
+    while(palavra_atual != NULL){
+        Classificacao comparar_atual = checar_palavra(palavra, palavra_atual->texto);
+        if(comparar_atual == VERDE){
+            return VERDE;
+        } else if(comparar_atual == AMARELO){
+            estado = AMARELO;
+        }
+        palavra_atual = palavra_atual->proximo;
+    }
+    if(estado == AMARELO){
+        return AMARELO;
+    } else {//verifica após se ainda tem desconto de limite de caracteres
+        for(int i = 0;i<tamanho;i++){
+            if (i==hash) continue;
+            palavra_atual = hash_list[i];
+            while(palavra_atual != NULL){
+                Classificacao comparar_atual = checar_palavra(palavra, palavra_atual->texto);
+                if(comparar_atual == VERDE){
+                    return VERDE;
+                } else if(comparar_atual == AMARELO){
+                    return AMARELO;
+                }
+                palavra_atual = palavra_atual->proximo;
+            }
+        }
+    }
+    return VERMELHO;
 }
 int main(){
+    /*pegar ints de dicionario, e depois as palavras a serem verificadas*/
 }
