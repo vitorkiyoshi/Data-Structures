@@ -108,4 +108,38 @@ Classificacao checar_dicionario(char* palavra, p_no *hash_list, int tamanho){//c
 }
 int main(){
     /*pegar ints de dicionario, e depois as palavras a serem verificadas*/
+    int tamanho, quantidade_testes;
+    scanf("%i %i", &tamanho, &quantidade_testes);
+    p_no *hash_list = malloc(sizeof(p_no) * tamanho);
+    //criar lista hash
+    for(int i = 0; i<tamanho; i++){
+        hash_list[i] = NULL;
+    }
+    for(int i = 0; i<tamanho; i++){
+        char *palavra = malloc(sizeof(char) * 26);
+        scanf("%s", palavra);
+        adicionar(palavra, hash_list, tamanho);
+    }
+    //apos armazenar palavras, comparar
+    for(int i = 0; i<quantidade_testes; i++){
+        char *palavra = malloc(sizeof(char)*25);
+        scanf("%s", palavra);
+        Classificacao classificacao_palavra = checar_dicionario(palavra, hash_list, tamanho);
+        switch (classificacao_palavra) {//basta printar os resultados
+            case VERDE:
+                printf("verde\n");
+                break;
+            case AMARELO:
+                printf("amarelo\n");
+                break;
+            case VERMELHO:
+                printf("vermelho\n");
+                break;
+        }
+        free(palavra);
+    }
+    for(int i = 0; i<tamanho; i++){
+        destruir_lista(hash_list[i]);
+    }
+    free(hash_list);
 }
