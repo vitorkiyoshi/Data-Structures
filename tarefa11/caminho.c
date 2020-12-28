@@ -97,4 +97,46 @@ int main() {
             lista_objetivos = adicionar(lista_objetivos, leitura);
         }
     }
+    //registrando matriz de distancias
+    p_ponto *pontos = malloc(sizeof(p_ponto)*tamanho);
+    p_no atual = lista_pontos;
+    /*Deve-se então, registrar qual possui menor distancia entre os pontos e o lugia, assim percorrendo a lista*/
+    for(int i=0;i<tamanho;i++){
+        pontos[i] = atual->atual;
+        p_no no_objetivo = lista_objetivos;
+        while(no_objetivo != NULL){
+            p_ponto objetivo = no_objetivo->atual;
+            double distancia_ao_objetivo = calcular_distancia(pontos[i], objetivo);
+            if(distancia_ao_objetivo < pontos[i]->distancia_ao_objetivo){
+                pontos[i]->distancia_ao_objetivo = distancia_ao_objetivo;
+            }
+            no_objetivo = no_objetivo->proximo;
+        }
+        atual = atual->proximo;
+    }
+    qsort(pontos, tamanho, sizeof(p_ponto), comparar_pontos);
+    double **distancias = encontrar_matriz_distancias(pontos, tamanho);//criando matriz com pontos em ordem
+    for(int i=0;i<tamanho;i++){
+        for(int j=0;j<i;j++){
+            if(distancias[i][j] < pontos[i]->distancia_ao_objetivo){
+                if(distancias[i][j]>pontos[j]->distancia_ao_objetivo) {
+                    pontos[i]->distancia_ao_objetivo = distancias[i][j];
+                } else {
+                    pontos[i]->distancia_ao_objetivo = pontos[j]->distancia_ao_objetivo;
+                    break;
+                }
+            }
+        }
+        if(pontos[i]->inicial){
+            printf("%i", round_up(pontos[i]->distancia_ao_objetivo));//por fim, printar o primeiro valor
+        }
+    }
+    destruir_lista(lista_pontos);
+    destruir_lista(lista_objetivos);
+    free(pontos);
+    for(int i = 0;i<tamanho;i++){
+        free(distancias[i]);
+    }
+    free(distancias);
+    return 0;
 }
