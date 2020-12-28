@@ -80,6 +80,7 @@ int main() {
     leitura->distancia_ao_objetivo = INFINITY;//tipologia especial para que seja maior que qualquer outro numero double.
     lista_pontos = adicionar(lista_pontos, leitura);
     char tipo[15];
+    // 2 doubles como ponto
     while(1){
         leitura = malloc(sizeof(Ponto));
         if(scanf("%lf %lf", &leitura->x, &leitura->y) == EOF){
@@ -131,6 +132,7 @@ int main() {
             printf("%i", round_up(pontos[i]->distancia_ao_objetivo));//por fim, printar o primeiro valor
         }
     }
+    //free para: listapontos, listaobjetivos, pontos, distancias
     destruir_lista(lista_pontos);
     destruir_lista(lista_objetivos);
     free(pontos);
