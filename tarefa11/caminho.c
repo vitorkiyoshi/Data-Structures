@@ -34,5 +34,40 @@ void destruir_lista(p_no raiz){
         free(raiz);
     }
 }
+//comparar a distnacia entre os pontos, para saber qual o menor
+int comparar_pontos(const void * a, const void * b){
+    double oa = (*((p_ponto*)a))->distancia_ao_objetivo;
+    double ob = (*((p_ponto*)b))->distancia_ao_objetivo;
+    if (oa > ob)
+        return 1;
+    else if (oa < ob)
+        return -1;
+    else
+        return 0;
+}
+//ponteiro para que consiga ser dinamicamente alocado, double pointer para matriz.
+double **encontrar_matriz_distancias(p_ponto *pontos, int tamanho){
+    double **distancias = malloc(tamanho * sizeof(double *));
+    for (int i = 0; i < tamanho; i++) {
+        distancias[i] = malloc(tamanho * sizeof(double));
+    }
+    for (int i = 0; i < tamanho; i++) {
+        distancias[i][i] = 0.0;
+        for (int j = i + 1; j < tamanho; j++) {
+            distancias[i][j] = distancias[j][i] = calcular_distancia(pontos[i], pontos[j]);
+        }
+    }
+    return distancias;
+}
+
+int round_up(double dist) {//arredondamento
+    int distancia_inteira = (int) dist;
+    if(dist == distancia_inteira){
+        return distancia_inteira;
+    } else{
+        return distancia_inteira + 1;
+    }
+}
+
 int main() {
 }
