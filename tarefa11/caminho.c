@@ -124,12 +124,11 @@ int main() {
                     pontos[i]->distancia_ao_objetivo = distancias[i][j];
                 } else {
                     pontos[i]->distancia_ao_objetivo = pontos[j]->distancia_ao_objetivo;
-                    break;
                 }
             }
         }
         if(pontos[i]->inicial){
-            printf("%d", (int) ceil(pontos[i]->distancia_ao_objetivo));//por fim, printar o primeiro valor
+            printf("%i", round_up(pontos[i]->distancia_ao_objetivo));//por fim, printar o primeiro valor
         }
     }
     //free para: listapontos, listaobjetivos, pontos, distancias
