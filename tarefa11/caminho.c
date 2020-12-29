@@ -20,12 +20,6 @@ double calcular_distancia(p_ponto a, p_ponto b){//dist. Euclidiana
     double y = a->y - b->y;
     return sqrt(x*x + y*y);
 }
-p_no criarlista(){
-    p_no lista;
-    lista->atual=NULL;
-    lista->proximo=NULL;
-    return lista;
-}
 //operar lista
 p_no adicionar(p_no raiz, p_ponto ponto){
     p_no novo = malloc(sizeof(No));
@@ -77,8 +71,8 @@ int round_up(double dist) {//verificação de arredondament
 
 int main() {
     //listas
-    p_no lista_pontos = criarlista();
-    p_no lista_objetivos = criarlista();
+    p_no lista_pontos = NULL;
+    p_no lista_objetivos = NULL;
     int tamanho = 1;
     p_ponto leitura = malloc(sizeof(Ponto));
     scanf("%lf %lf", &leitura->x, &leitura->y);
