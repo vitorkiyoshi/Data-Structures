@@ -60,7 +60,7 @@ double **encontrar_matriz_distancias(p_ponto *pontos, int tamanho){
     return distancias;
 }
 
-int round_up(double dist) {//verificação de arredondamento
+int round_up(double dist) {//verificação de arredondament
     int distancia_inteira = (int) dist;
     if(dist == distancia_inteira){
         return distancia_inteira;
@@ -124,6 +124,7 @@ int main() {
                     pontos[i]->distancia_ao_objetivo = distancias[i][j];
                 } else {
                     pontos[i]->distancia_ao_objetivo = pontos[j]->distancia_ao_objetivo;
+                    break;
                 }
             }
         }
