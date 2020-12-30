@@ -113,6 +113,7 @@ int main() {//usar então as listas para formar grafo de distancias, consistindo
             break;
         }
     }
+    /*Free para: listapontos, listaobjetivos e pontos*/
     destruir_lista(lista_pontos);
     destruir_lista(lista_objetivos);
     free(pontos);
