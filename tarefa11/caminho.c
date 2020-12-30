@@ -2,25 +2,26 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-/*Estruturas, pontos para dist. euclidiana e para calculo via grafo*/
-typedef struct ponto {
+
+typedef struct ponto {//estruturas para lista de distancias
     double x,y;
     int inicial;
     double distancia_ao_objetivo;
 } Ponto;
 
 typedef Ponto* p_ponto;
-typedef struct no {//lista de pontos
+typedef struct no {
     p_ponto atual;
     struct no *proximo;
 } No;
 typedef No* p_no;
-double calcular_distancia(p_ponto a, p_ponto b){//dist. Euclidiana
+//dist. euclidiana entre dois pontos(usar estrutura de ponto)
+double calcular_distancia(p_ponto a, p_ponto b){
     double x = a->x - b->x;
     double y = a->y - b->y;
     return sqrt(x*x + y*y);
 }
-//operar lista
+//operações para listas
 p_no adicionar(p_no raiz, p_ponto ponto){
     p_no novo = malloc(sizeof(No));
     novo->atual = ponto;
@@ -34,7 +35,7 @@ void destruir_lista(p_no raiz){
         free(raiz);
     }
 }
-//comparar a distnacia entre os pontos, para saber qual o menor
+//comparador de distancias
 int comparar_pontos(const void * a, const void * b){
     double oa = (*((p_ponto*)a))->distancia_ao_objetivo;
     double ob = (*((p_ponto*)b))->distancia_ao_objetivo;
@@ -45,43 +46,19 @@ int comparar_pontos(const void * a, const void * b){
     else
         return 0;
 }
-//ponteiro para que consiga ser dinamicamente alocado, double pointer para matriz.
-double **encontrar_matriz_distancias(p_ponto *pontos, int tamanho){
-    double **distancias = malloc(tamanho * sizeof(double *));
-    for (int i = 0; i < tamanho; i++) {
-        distancias[i] = malloc(tamanho * sizeof(double));
-    }
-    for (int i = 0; i < tamanho; i++) {
-        distancias[i][i] = 0.0;
-        for (int j = i + 1; j < tamanho; j++) {
-            distancias[i][j] = distancias[j][i] = calcular_distancia(pontos[i], pontos[j]);
-        }
-    }
-    return distancias;
-}
 
-int round_up(double dist) {//verificação de arredondament
-    int distancia_inteira = (int) dist;
-    if(dist == distancia_inteira){
-        return distancia_inteira;
-    } else{
-        return distancia_inteira + 1;
-    }
-}
-
-int main() {
-    //listas
+int main() {//usar então as listas para formar grafo de distancias, consistindo em achar a menor dist
     p_no lista_pontos = NULL;
     p_no lista_objetivos = NULL;
     int tamanho = 1;
     p_ponto leitura = malloc(sizeof(Ponto));
+    //leitura inicial
     scanf("%lf %lf", &leitura->x, &leitura->y);
     leitura->inicial=1;
-    leitura->distancia_ao_objetivo = INFINITY;//tipologia especial para que seja maior que qualquer outro numero double.
+    leitura->distancia_ao_objetivo = INFINITY;
     lista_pontos = adicionar(lista_pontos, leitura);
     char tipo[15];
-    // 2 doubles como ponto
-    while(1){
+    while(1){//após leitura inicial, registrar comparação entre os pontos até EOF
         leitura = malloc(sizeof(Ponto));
         if(scanf("%lf %lf", &leitura->x, &leitura->y) == EOF){
             free(leitura);
@@ -89,8 +66,8 @@ int main() {
         }
         scanf("%s ", tipo);
         leitura->inicial=0;
-        if(strcmp(tipo,"Lugia")){//definindo distancia até o objetivo
-            leitura->distancia_ao_objetivo = INFINITY;
+        if(strcmp(tipo,"Lugia")){//verificando se o tipo é lugia, superior a todos os outros no grafo
+            leitura->distancia_ao_objetivo = INFINITY;//tipologia especial que é maior que qualquer double
             lista_pontos = adicionar(lista_pontos, leitura);
             tamanho++;
         } else {
@@ -98,10 +75,9 @@ int main() {
             lista_objetivos = adicionar(lista_objetivos, leitura);
         }
     }
-    //registrando matriz de distancias
+    //usando então agora vetor para distancias, bastando calcular na hora a dist agora
     p_ponto *pontos = malloc(sizeof(p_ponto)*tamanho);
     p_no atual = lista_pontos;
-    /*Deve-se então, registrar qual possui menor distancia entre os pontos e o lugia, assim percorrendo a lista*/
     for(int i=0;i<tamanho;i++){
         pontos[i] = atual->atual;
         p_no no_objetivo = lista_objetivos;
@@ -115,30 +91,30 @@ int main() {
         }
         atual = atual->proximo;
     }
+    //ordenando distancias usando comparador
     qsort(pontos, tamanho, sizeof(p_ponto), comparar_pontos);
-    double **distancias = encontrar_matriz_distancias(pontos, tamanho);//criando matriz com pontos em ordem
     for(int i=0;i<tamanho;i++){
-        for(int j=0;j<i;j++){
-            if(distancias[i][j] < pontos[i]->distancia_ao_objetivo){
-                if(distancias[i][j]>pontos[j]->distancia_ao_objetivo) {
-                    pontos[i]->distancia_ao_objetivo = distancias[i][j];
+        for(int j=0;j<i;j++){//adicionando mais pontos de break para aumentar eficiencia
+            double distancia_i_j = calcular_distancia(pontos[i], pontos[j]);
+            if(distancia_i_j < pontos[i]->distancia_ao_objetivo){
+                if(distancia_i_j>pontos[j]->distancia_ao_objetivo) {
+                    pontos[i]->distancia_ao_objetivo = distancia_i_j;
                 } else {
                     pontos[i]->distancia_ao_objetivo = pontos[j]->distancia_ao_objetivo;
                     break;
                 }
             }
+            if(pontos[j]->distancia_ao_objetivo > pontos[i]->distancia_ao_objetivo){
+                break;
+            }
         }
         if(pontos[i]->inicial){
-            printf("%i", round_up(pontos[i]->distancia_ao_objetivo));//por fim, printar o primeiro valor
+            printf("%i", (int) ceil(pontos[i]->distancia_ao_objetivo));
+            break;
         }
     }
-    //free para: listapontos, listaobjetivos, pontos, distancias
     destruir_lista(lista_pontos);
     destruir_lista(lista_objetivos);
     free(pontos);
-    for(int i = 0;i<tamanho;i++){
-        free(distancias[i]);
-    }
-    free(distancias);
     return 0;
 }
