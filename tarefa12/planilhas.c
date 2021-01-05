@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#define MAX_CELULA 3
-#define MAX_CAMINHO 16
-#define MAX_STRING 10000
+#define MAX_CELULA 7
+#define MAX_CAMINHO 30
+#define MAX_STRING 1000
 typedef struct lista_token{
     char *token;
     struct lista_token *proximo;
@@ -31,13 +31,19 @@ p_lista adicionar(p_lista raiz, char *token) {//adiciona token na lista de token
     ultimo->proximo=novo;
     return raiz;
 }
+void destruir_lista(p_lista raiz){
+    if(raiz != NULL) {
+        destruir_lista(raiz->proximo);
+        free(raiz);
+    }
+}
 char **tokenizar(char *expressao) {//cria tokens de expressão, ler celula
     int limite = strlen(expressao) ;
     int quantidade_tokens = 0;
-    char *token = malloc(sizeof(char) *MAX_CELULA);
+    char *token;
+    token = malloc(sizeof(char) * MAX_CELULA);
     int pos = 0;
     p_lista lista =NULL;
-    raiz=lista;
     for(int i=0;i<limite;i++){
         if(expressao[i] ==' ') {
             token[pos] = '\0';
@@ -50,37 +56,41 @@ char **tokenizar(char *expressao) {//cria tokens de expressão, ler celula
             pos++;
         }
     }
-    token[pos] = '\0';
-    quantidade_tokens++;
-    lista=adicionar(lista, token);
+    p_lista raiz=lista;
     char **tokens;
-    *tokens = malloc(sizeof(char) * quantidade_tokens);
+    tokens = malloc(sizeof(char) * quantidade_tokens);
     int i=0;
     while(lista!=NULL) {
         tokens[i]=lista->token;
         i++;
         lista=lista->proximo;
     }
-    destruirLista(raiz);
+    destruir_lista(raiz);
     return tokens;
 }
 char* resolver_expressao(p_celula **celulas, char **expressao, char **dependencias, int quantidade_dependencias) {/*resolver uma expressão apresentando vetor de celulas
  * */
+    if(expressao[0][0] == '='){
+        expressao++;
+    }
     if(expressao[0][0]>='A'&& expressao[0][0]<='Z'){
         for(int i=0;i<quantidade_dependencias;i++) {
             if(strcmp(expressao[0],dependencias[i])==0){//verificação ciclicidade
                 return "#ERRO#";
             }
-            p_celula objetivo = celulas[expressao[0][0]-'A'][atoi(expressao[0]+1)-1];
+            int linha = atoi(expressao[0]+1)-1;
+            int coluna = expressao[0][0]-'A';
+            p_celula objetivo = celulas[atoi(expressao[0]+1)-1][expressao[0][0]-'A'];
             if(objetivo->calculado) {
                 char *resultado = malloc(sizeof(char)*20);
-                itoa(resultado,objetivo->valor,10);
+                sprintf(resultado, "%d", objetivo->valor);
                 return resultado;
             } else {
                 dependencias[quantidade_dependencias] = expressao[0];
                 char *resultado = resolver_expressao(celulas, objetivo->expressao, dependencias, quantidade_dependencias +1);
                 objetivo->valor = atoi(resultado);
                 objetivo->calculado = 1;
+                return resultado;
             }
         }
     } else {
@@ -106,22 +116,17 @@ char* resolver_expressao(p_celula **celulas, char **expressao, char **dependenci
         int result;
         if(operacao=='+'){//conversão de array para int para calculo das operações
             result = atoi(resultado_primeiro) + atoi(resultado_segundo);
-        } else if(operacao=='-'){
+        } else{
             result = atoi(resultado_primeiro) - atoi(resultado_segundo);
         }
         free(resultado_primeiro);
         free(resultado_segundo);
         char *resultado = malloc(sizeof(char)*20);//no máximo 20 carac.
-        itoa(resultado,result,10);
+        sprintf(resultado, "%d", result);
         return resultado;
     }
 }
-void destruir_lista(p_lista raiz){
-    if(raiz != NULL) {
-        destruir_lista(raiz->proximo);
-        free(raiz);
-    }
-}
+
 void escreverArquivo(int colunas, int linhas, p_celula **celulas, char *caminho){
     FILE *arquivo=fopen(caminho, "w");
     for(int i=0;i<linhas;i++) {
@@ -157,15 +162,19 @@ int main(){
     char *celula;//manipulação da string
     char string[MAX_STRING];//pegar a linha do csv
     p_celula **celulas;
-    scanf("%s %i %i",caminho,&linhas,&colunas);
-    *celulas=malloc(linhas*sizeof(*p_celula));
+    scanf("%s %i %i",caminho,&colunas,&linhas);
+    celulas=malloc(linhas*sizeof(p_celula**));
     for(int i=0;i<linhas;i++){
-        celulas[i]=malloc(colunas*sizeof(p_celula));
+        celulas[i]=malloc(colunas*sizeof(p_celula*));
+        for(int j=0;j<colunas;j++){
+            celulas[i][j] = malloc(sizeof(Celula));
+        }
     }
     FILE *arquivo;
-    *arquivo=fopen(caminho,"r");//leitura para popular dados locais
+    arquivo=fopen(caminho,"r");//leitura para popular dados locais
+    char c;
     for(int j=0;j<linhas;j++){
-        fscanf(arquivo,"%s",string);
+        fscanf(arquivo,"%[^\n]%c",string, &c);
         celula=strtok(string,",");
         if(verificarConstante(celula)) {
             celulas[j][0]->expressao=NULL;
@@ -184,8 +193,8 @@ int main(){
                 celulas[j][i]->valor=atoi(celula);
             }
             else{
-                celulas[j][0]->expressao=tokenizar(celula);
-                celulas[j][0]->calculado=0;
+                celulas[j][i]->expressao=tokenizar(celula);
+                celulas[j][i]->calculado=0;
             }
         }
     }
@@ -199,23 +208,37 @@ int main(){
             scanf("%s",destino);
             pos_coluna=(int) destino[0] -65; //65 devido tabela ASCII do caractere'A'
             pos_linha=atoi(destino+1)-1;//coluna
+            char **dependencias = malloc(sizeof(char *) * linhas * colunas);
+            dependencias[0] = destino;
             if(celulas[pos_linha][pos_coluna]->calculado==0){
-                printf("%s",resolver_expressao(celulas,celulas[pos_linha][pos_coluna]->expressao,&destino,colunas*linhas));//RESOLVER QUESTÃO DE COMO COLOCAR O RESOLVER EXPRESSÃO
+                char *resultado = resolver_expressao(celulas,celulas[pos_linha][pos_coluna]->expressao,dependencias,1);
+                printf("%s: %s\n", destino, resultado);
+                celulas[pos_linha][pos_coluna]->valor = atoi(resultado);
+                celulas[pos_linha][pos_coluna]->calculado = 1;
             }
             else{
-                printf("%i",celulas[pos_linha][pos_coluna]->valor);
+                printf("%s: %i\n", destino, celulas[pos_linha][pos_coluna]->valor);
             }
         }
-        else{
-            scanf("%s %i",destino,&novo_valor);
+        else if (operacao=='S'){
+            scanf("%s %i ",destino,&novo_valor);
             pos_coluna=(int) destino[0] -65;
             pos_linha=atoi(destino+1)-1;
-            printf("%s: %i -> %i",destino,celulas[pos_linha][pos_coluna]->valor,novo_valor);
-            celulas[pos_linha][pos_coluna]->valor=novo_valor;
+            printf("%s: %i -> %i\n",destino,celulas[pos_linha][pos_coluna]->valor,novo_valor);
+            celulas[pos_linha][pos_coluna]->valor = novo_valor;
+            celulas[pos_linha][pos_coluna]->expressao=NULL;
+            celulas[pos_linha][pos_coluna]->calculado=1;
+        }
+        for(int j=0;j<linhas;j++){
+            for(int i=0;i<colunas;i++){
+                if(celulas[j][i]->expressao != NULL){
+                    celulas[j][i]->calculado = 0;
+                }
+            }
         }
     }
     //no final, reescrever csv modificado
-    escreverArquivo(colunas,linhas,celulas,caminho);
+    //escreverArquivo(colunas,linhas,celulas,caminho);
     //free para celulas
     for(int i=0;i<linhas;i++){
         for(int j=0;j<colunas;j++){
