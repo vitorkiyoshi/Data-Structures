@@ -75,11 +75,9 @@ char* resolver_expressao(p_celula **celulas, char **expressao, char **dependenci
     }
     if(expressao[0][0]>='A'&& expressao[0][0]<='Z'){
         for(int i=0;i<quantidade_dependencias;i++) {
-            if(strcmp(expressao[0],dependencias[i])==0){//verificação ciclicidade
+            if(strcmp(expressao[0],dependencias[i])==0) {//verificação ciclicidade
                 return "#ERRO#";
             }
-            int linha = atoi(expressao[0]+1)-1;
-            int coluna = expressao[0][0]-'A';
             p_celula objetivo = celulas[atoi(expressao[0]+1)-1][expressao[0][0]-'A'];
             if(objetivo->calculado) {
                 char *resultado = malloc(sizeof(char)*20);
