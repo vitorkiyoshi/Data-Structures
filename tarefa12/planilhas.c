@@ -123,6 +123,7 @@ char* resolver_expressao(p_celula **celulas, char **expressao, char **dependenci
         sprintf(resultado, "%d", result);
         return resultado;
     }
+    return NULL;
 }
 
 void escreverArquivo(int colunas, int linhas, p_celula **celulas, char *caminho){
