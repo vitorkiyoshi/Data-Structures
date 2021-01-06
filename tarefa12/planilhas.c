@@ -3,7 +3,6 @@
 #include <string.h>
 #define MAX_CELULA 7
 #define MAX_CAMINHO 30
-#define MAX_RESULTADO 20
 #define MAX_STRING 1000
 typedef struct lista_token{
     char *token;
@@ -78,21 +77,23 @@ char* resolver_expressao(p_celula **celulas, char **expressao, char **dependenci
     }
     if(expressao[0][0]>='A'&& expressao[0][0]<='Z'){
         for(int i=0;i<quantidade_dependencias;i++) {
-            if(strcmp(expressao[0],dependencias[i])==0){//verificação ciclicidade
-                return "#ERRO#";
+            if (strcmp(expressao[0], dependencias[i]) == 0) {//verificação ciclicidade
+                char *result = malloc(sizeof(char) * 7);
+                strcpy(result, "#ERRO#");
+                return result;
             }
-            p_celula objetivo = celulas[atoi(expressao[0]+1)-1][expressao[0][0]-'A'];
-            if(objetivo->calculado) {
-                char *resultado = malloc(sizeof(char)*20);
-                sprintf(resultado, "%d", objetivo->valor);
-                return resultado;
-            } else {
-                dependencias[quantidade_dependencias] = expressao[0];
-                char *resultado = resolver_expressao(celulas, objetivo->expressao, dependencias, quantidade_dependencias +1);
-                objetivo->valor = atoi(resultado);
-                objetivo->calculado = 1;
-                return resultado;
-            }
+        }
+        p_celula objetivo = celulas[atoi(expressao[0]+1)-1][expressao[0][0]-'A'];
+        if(objetivo->calculado) {
+            char *resultado = malloc(sizeof(char)*20);
+            sprintf(resultado, "%d", objetivo->valor);
+            return resultado;
+        } else {
+            dependencias[quantidade_dependencias] = expressao[0];
+            char *resultado = resolver_expressao(celulas, objetivo->expressao, dependencias, quantidade_dependencias +1);
+            objetivo->valor = atoi(resultado);
+            objetivo->calculado = 1;
+            return resultado;
         }
     } else {
         char **primeiro_termo, **segundo_termo;
@@ -127,13 +128,12 @@ char* resolver_expressao(p_celula **celulas, char **expressao, char **dependenci
         } else{
             result = atoi(resultado_primeiro) - atoi(resultado_segundo);
         }
-        char resultado[20];//no máximo 20 carac.
+        char *resultado = malloc(sizeof(char)*20);//no máximo 20 carac.
         sprintf(resultado, "%d", result);
         free(resultado_primeiro);
         free(resultado_segundo);
         return resultado;
     }
-    return NULL;
 }
 
 void escreverArquivo(int colunas, int linhas, p_celula **celulas, char *caminho){
@@ -222,10 +222,11 @@ int main(){
             if(celulas[pos_linha][pos_coluna]->calculado==0){
                 char *resultado = resolver_expressao(celulas,celulas[pos_linha][pos_coluna]->expressao,dependencias,1);
                 printf("%s: %s\n", destino, resultado);
-                if(resultado[0]=='#') {
+                if(resultado[0]!='#') {
                     celulas[pos_linha][pos_coluna]->valor = atoi(resultado);
                     celulas[pos_linha][pos_coluna]->calculado = 1;
                 }
+                free(resultado);
             }
             else{
                 printf("%s: %i\n", destino, celulas[pos_linha][pos_coluna]->valor);
@@ -243,7 +244,7 @@ int main(){
         }
         for(int j=0;j<linhas;j++){
             for(int i=0;i<colunas;i++){
-                if(celulas[j][i]->expressao != NULL){//resetar as celulas já que mudou uma cte
+                if(celulas[j][i]->expressao != NULL){
                     celulas[j][i]->calculado = 0;
                 }
             }
