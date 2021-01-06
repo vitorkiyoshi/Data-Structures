@@ -3,6 +3,7 @@
 #include <string.h>
 #define MAX_CELULA 7
 #define MAX_CAMINHO 30
+#define MAX_RESULTADO 20
 #define MAX_STRING 1000
 typedef struct lista_token{
     char *token;
@@ -126,7 +127,7 @@ char* resolver_expressao(p_celula **celulas, char **expressao, char **dependenci
         } else{
             result = atoi(resultado_primeiro) - atoi(resultado_segundo);
         }
-        char *resultado = malloc(sizeof(char)*20);//no máximo 20 carac.
+        char resultado[20];//no máximo 20 carac.
         sprintf(resultado, "%d", result);
         free(resultado_primeiro);
         free(resultado_segundo);
@@ -221,11 +222,10 @@ int main(){
             if(celulas[pos_linha][pos_coluna]->calculado==0){
                 char *resultado = resolver_expressao(celulas,celulas[pos_linha][pos_coluna]->expressao,dependencias,1);
                 printf("%s: %s\n", destino, resultado);
-                if(resultado[0]!='#') {
+                if(resultado[0]=='#') {
                     celulas[pos_linha][pos_coluna]->valor = atoi(resultado);
+                    celulas[pos_linha][pos_coluna]->calculado = 1;
                 }
-                celulas[pos_linha][pos_coluna]->calculado = 1;
-                free(resultado);
             }
             else{
                 printf("%s: %i\n", destino, celulas[pos_linha][pos_coluna]->valor);
