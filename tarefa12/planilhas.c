@@ -132,6 +132,7 @@ char* resolver_expressao(p_celula **celulas, char **expressao, char **dependenci
         free(resultado_segundo);
         return resultado;
     }
+    return NULL;
 }
 
 void escreverArquivo(int colunas, int linhas, p_celula **celulas, char *caminho){
