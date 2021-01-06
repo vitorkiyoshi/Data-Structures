@@ -214,14 +214,14 @@ int main(){
     while(scanf("%c", &operacao)!=EOF){
         if(operacao=='G'){
             scanf("%s",destino);
-            pos_coluna=(int) destino[0] -65; //65 devido tabela ASCII do caractere'A'
+            pos_coluna=(int) destino[0] -65; //65 devido tabela ASCII do caractere 'A'
             pos_linha=atoi(destino+1)-1;//coluna
             char **dependencias = malloc(sizeof(char *) * linhas * colunas);
             dependencias[0] = destino;
             if(celulas[pos_linha][pos_coluna]->calculado==0){
                 char *resultado = resolver_expressao(celulas,celulas[pos_linha][pos_coluna]->expressao,dependencias,1);//elaborar a resolução
                 printf("%s: %s\n", destino, resultado);
-                if(resultado[0]=='#') {
+                if(resultado[0]!='#') {
                     celulas[pos_linha][pos_coluna]->valor = atoi(resultado);
                     celulas[pos_linha][pos_coluna]->calculado = 1;
                 }
