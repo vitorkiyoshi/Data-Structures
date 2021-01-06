@@ -7,14 +7,11 @@ typedef struct lista_token{
     struct lista_token *proximo;
 } Lista_token;
 
-typedef Lista_token* p_lista;
-
 typedef struct celula{
     char **expressao;
     int valor;
     int calculado;
 } Celula;
-typedef Celula* p_celula;
 
 p_lista adicionar(p_lista raiz, char *token);
 void destruir_lista(p_lista raiz);
