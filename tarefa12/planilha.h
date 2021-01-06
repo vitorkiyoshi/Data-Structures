@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "planilha.h"
 #define MAX_CELULA 7
 #define MAX_CAMINHO 30
 #define MAX_STRING 1000
