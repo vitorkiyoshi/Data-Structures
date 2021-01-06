@@ -132,7 +132,6 @@ char* resolver_expressao(p_celula **celulas, char **expressao, char **dependenci
         free(resultado_segundo);
         return resultado;
     }
-    return NULL;
 }
 
 void escreverArquivo(int colunas, int linhas, p_celula **celulas, char *caminho){
@@ -214,17 +213,17 @@ int main(){
     while(scanf("%c", &operacao)!=EOF){
         if(operacao=='G'){
             scanf("%s",destino);
-            pos_coluna=(int) destino[0] -65; //65 devido tabela ASCII do caractere 'A'
+            pos_coluna=(int) destino[0] -65; //65 devido tabela ASCII do caractere'A'
             pos_linha=atoi(destino+1)-1;//coluna
             char **dependencias = malloc(sizeof(char *) * linhas * colunas);
             dependencias[0] = destino;
             if(celulas[pos_linha][pos_coluna]->calculado==0){
-                char *resultado = resolver_expressao(celulas,celulas[pos_linha][pos_coluna]->expressao,dependencias,1);//elaborar a resolução
+                char *resultado = resolver_expressao(celulas,celulas[pos_linha][pos_coluna]->expressao,dependencias,1);
                 printf("%s: %s\n", destino, resultado);
                 if(resultado[0]!='#') {
                     celulas[pos_linha][pos_coluna]->valor = atoi(resultado);
-                    celulas[pos_linha][pos_coluna]->calculado = 1;
                 }
+                celulas[pos_linha][pos_coluna]->calculado = 1;
                 free(resultado);
             }
             else{
@@ -243,7 +242,7 @@ int main(){
         }
         for(int j=0;j<linhas;j++){
             for(int i=0;i<colunas;i++){
-                if(celulas[j][i]->expressao != NULL){
+                if(celulas[j][i]->expressao != NULL){//resetar as celulas já que mudou uma cte
                     celulas[j][i]->calculado = 0;
                 }
             }
