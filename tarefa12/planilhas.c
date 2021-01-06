@@ -56,15 +56,17 @@ char **tokenizar(char *expressao) {//cria tokens de expressão, ler celula
             pos++;
         }
     }
+    free(token);
     p_lista raiz=lista;
     char **tokens;
-    tokens = malloc(sizeof(char) * quantidade_tokens);
+    tokens = malloc(sizeof(char*) * (quantidade_tokens + 1));
     int i=0;
     while(lista!=NULL) {
         tokens[i]=lista->token;
         i++;
         lista=lista->proximo;
     }
+    tokens[quantidade_tokens] = NULL;
     destruir_lista(raiz);
     return tokens;
 }
@@ -75,7 +77,7 @@ char* resolver_expressao(p_celula **celulas, char **expressao, char **dependenci
     }
     if(expressao[0][0]>='A'&& expressao[0][0]<='Z'){
         for(int i=0;i<quantidade_dependencias;i++) {
-            if(strcmp(expressao[0],dependencias[i])==0) {//verificação ciclicidade
+            if(strcmp(expressao[0],dependencias[i])==0){//verificação ciclicidade
                 return "#ERRO#";
             }
             p_celula objetivo = celulas[atoi(expressao[0]+1)-1][expressao[0][0]-'A'];
@@ -95,7 +97,7 @@ char* resolver_expressao(p_celula **celulas, char **expressao, char **dependenci
         char **primeiro_termo, **segundo_termo;
         primeiro_termo = expressao + 1;
         segundo_termo = expressao;
-        int parenteses = 0;
+        int parenteses = segundo_termo[0][0] == '('?-1:0;
         char operacao;
         while(1){
             if(segundo_termo[0][0] == '('){
@@ -108,19 +110,26 @@ char* resolver_expressao(p_celula **celulas, char **expressao, char **dependenci
             }
             segundo_termo++;
         }
-        segundo_termo+=2;
+        segundo_termo+=1;
         char *resultado_primeiro = resolver_expressao(celulas, primeiro_termo, dependencias, quantidade_dependencias);
+        if(resultado_primeiro[0]=='#'){
+            return resultado_primeiro;
+        }
         char *resultado_segundo = resolver_expressao(celulas, segundo_termo, dependencias, quantidade_dependencias);
+        if(resultado_segundo[0]=='#'){
+            free(resultado_primeiro);
+            return resultado_segundo;
+        }
         int result;
         if(operacao=='+'){//conversão de array para int para calculo das operações
             result = atoi(resultado_primeiro) + atoi(resultado_segundo);
         } else{
             result = atoi(resultado_primeiro) - atoi(resultado_segundo);
         }
-        free(resultado_primeiro);
-        free(resultado_segundo);
         char *resultado = malloc(sizeof(char)*20);//no máximo 20 carac.
         sprintf(resultado, "%d", result);
+        free(resultado_primeiro);
+        free(resultado_segundo);
         return resultado;
     }
     return NULL;
@@ -210,14 +219,18 @@ int main(){
             char **dependencias = malloc(sizeof(char *) * linhas * colunas);
             dependencias[0] = destino;
             if(celulas[pos_linha][pos_coluna]->calculado==0){
-                char *resultado = resolver_expressao(celulas,celulas[pos_linha][pos_coluna]->expressao,dependencias,1);
+                char *resultado = resolver_expressao(celulas,celulas[pos_linha][pos_coluna]->expressao,dependencias,1);//elaborar a resolução
                 printf("%s: %s\n", destino, resultado);
-                celulas[pos_linha][pos_coluna]->valor = atoi(resultado);
-                celulas[pos_linha][pos_coluna]->calculado = 1;
+                if(resultado[0]=='#') {
+                    celulas[pos_linha][pos_coluna]->valor = atoi(resultado);
+                    celulas[pos_linha][pos_coluna]->calculado = 1;
+                }
+                free(resultado);
             }
             else{
                 printf("%s: %i\n", destino, celulas[pos_linha][pos_coluna]->valor);
             }
+            free(dependencias);
         }
         else if (operacao=='S'){
             scanf("%s %i ",destino,&novo_valor);
@@ -242,8 +255,12 @@ int main(){
     for(int i=0;i<linhas;i++){
         for(int j=0;j<colunas;j++){
             if(celulas[i][j]->expressao!=NULL) {
+                for(int k = 0;celulas[i][j]->expressao[k] != NULL; k++){
+                    free(celulas[i][j]->expressao[k]);
+                }
                 free(celulas[i][j]->expressao);
             }
+            free(celulas[i][j]);
         }
         free(celulas[i]);
     }
