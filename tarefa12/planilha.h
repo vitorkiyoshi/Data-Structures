@@ -12,6 +12,8 @@ typedef struct celula{
     int valor;
     int calculado;
 } Celula;
+typedef Lista_token* p_lista;
+typedef Celula* p_celula;
 
 p_lista adicionar(p_lista raiz, char *token);
 void destruir_lista(p_lista raiz);

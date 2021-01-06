@@ -1,11 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "planilha.h"
 #define MAX_CELULA 7
 #define MAX_CAMINHO 30
 #define MAX_STRING 1000
-typedef Lista_token* p_lista;
-typedef Celula* p_celula;
 p_lista adicionar(p_lista raiz, char *token) {//adiciona token na lista de tokens
     p_lista novo = malloc(sizeof(Lista_token));
     novo->token=token;
